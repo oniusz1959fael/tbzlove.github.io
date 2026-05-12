@@ -1,0 +1,2103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>THE BOYZ · 与你相遇</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#07101f;--deep:#0d1929;--card:#111e33;--card2:#162440;
+  --border:#1a2d4a;--border2:#223659;
+  --blue:#2563eb;--blue2:#3b82f6;--blue3:#60a5fa;
+  --pink:#e879a0;--pink2:#f9a8cc;
+  --gold:#c9a464;--gold2:#e8c97a;
+  --text:#cdd9ee;--text2:#a0b4cc;--muted:#5a7a9a;
+  --white:#eef4ff;
+  --red:#e05252;--green:#3dbc8a;
+  --glass:rgba(13,25,41,0.85);
+  --glassborder:rgba(255,255,255,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--navy);color:var(--text);font-family:'Noto Sans SC',sans-serif;}
+
+/* ── NOISE OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9999;}
+
+/* ── ORBS ── */
+.orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(90px);opacity:.10;}
+.orb1{width:500px;height:500px;background:radial-gradient(#1d4ed8,transparent);top:-200px;right:-150px;}
+.orb2{width:400px;height:400px;background:radial-gradient(#7c3aed,transparent);bottom:-150px;left:-100px;}
+.orb3{width:300px;height:300px;background:radial-gradient(#be185d,transparent);top:40%;left:60%;}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden;z-index:1;}
+.screen.active{display:flex;}
+
+/* ───────────────────────────────────────────
+   TITLE SCREEN
+─────────────────────────────────────────── */
+#s-title{align-items:center;justify-content:center;padding:40px 24px;text-align:center;
+  background:linear-gradient(160deg,#07101f 0%,#0d1929 60%,#0a1628 100%);}
+.title-eyebrow{font-size:10px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;
+  border:1px solid rgba(201,164,100,.25);padding:5px 16px;border-radius:20px;
+  margin-bottom:28px;animation:fadeUp .8s both;}
+.title-h1{font-family:'Playfair Display',serif;font-size:clamp(44px,11vw,80px);
+  font-weight:700;color:var(--white);line-height:1.05;margin-bottom:6px;
+  animation:fadeUp .8s .15s both;}
+.title-h1 em{font-style:italic;color:var(--blue3);}
+.title-jp{font-size:clamp(12px,3vw,16px);letter-spacing:10px;color:var(--blue3);
+  margin-bottom:36px;animation:fadeUp .8s .3s both;}
+.title-desc{max-width:360px;font-size:13px;line-height:2;color:var(--text2);
+  margin-bottom:44px;animation:fadeUp .8s .45s both;}
+.btn-primary{background:linear-gradient(135deg,#1d4ed8,#2563eb);border:none;color:#fff;
+  padding:15px 44px;border-radius:14px;font-family:'Noto Serif SC',serif;font-size:15px;
+  letter-spacing:3px;cursor:pointer;transition:all .3s;box-shadow:0 8px 32px rgba(37,99,235,.35);
+  animation:fadeUp .8s .6s both;}
+.btn-primary:active{transform:scale(.97);}
+.title-stars{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.star{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) var(--del,0s) infinite;}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.7}}
+
+/* ───────────────────────────────────────────
+   SETUP SCREENS
+─────────────────────────────────────────── */
+#s-member,#s-identity{background:var(--navy);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.setup-wrap{min-height:100%;padding:60px 20px 40px;max-width:480px;margin:0 auto;}
+.setup-back{position:fixed;top:0;left:0;right:0;padding:16px 20px;
+  background:rgba(7,16,31,.9);backdrop-filter:blur(12px);z-index:10;
+  display:flex;align-items:center;gap:10px;}
+.back-btn{background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;padding:4px;}
+.setup-label{font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+.setup-h2{font-family:'Playfair Display',serif;font-size:28px;color:var(--white);margin:12px 0 6px;}
+.setup-sub{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:28px;}
+
+.member-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.member-card{background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:16px 14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.member-card::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--blue),transparent);opacity:0;transition:.2s;}
+.member-card.sel{border-color:var(--blue2);}
+.member-card.sel::before{opacity:.15;}
+.member-card:active{transform:scale(.97);}
+.mc-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--white);font-weight:700;}
+.mc-kr{font-size:11px;color:var(--blue3);margin:2px 0 6px;letter-spacing:1px;}
+.mc-desc{font-size:11px;color:var(--text2);line-height:1.6;}
+.mc-check{position:absolute;top:10px;right:10px;width:18px;height:18px;
+  border-radius:50%;background:var(--blue2);display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#fff;opacity:0;transition:.2s;}
+.member-card.sel .mc-check{opacity:1;}
+
+.identity-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+.identity-item{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:16px 18px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:14px;}
+.identity-item.sel{border-color:var(--pink);}
+.identity-item:active{transform:scale(.98);}
+.ii-icon{width:40px;height:40px;border-radius:10px;background:var(--card2);
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ii-text .ii-title{font-size:14px;color:var(--white);font-weight:500;}
+.ii-text .ii-sub{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5;}
+
+/* ───────────────────────────────────────────
+   GAME SCREEN
+─────────────────────────────────────────── */
+#s-game{background:var(--navy);}
+
+/* Header */
+.g-header{display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px 10px;border-bottom:1px solid var(--border);
+  background:rgba(7,16,31,.92);backdrop-filter:blur(14px);flex-shrink:0;z-index:10;}
+.g-header-left{display:flex;flex-direction:column;gap:2px;}
+.g-member-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--white);}
+.g-chapter{font-size:10px;letter-spacing:2px;color:var(--muted);}
+.g-stats{display:flex;gap:10px;}
+.g-stat{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.g-stat-label{font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+.g-stat-bar{width:42px;height:3px;background:var(--border);border-radius:2px;overflow:hidden;}
+.g-stat-fill{height:100%;border-radius:2px;transition:width .5s ease;}
+.fill-aff{background:linear-gradient(90deg,#be185d,#ec4899);}
+.fill-trust{background:linear-gradient(90deg,#1d4ed8,#60a5fa);}
+.fill-risk{background:linear-gradient(90deg,#d97706,#ef4444);}
+.g-stat-num{font-size:9px;color:var(--text2);}
+.g-menu-btn{background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer;padding:4px 8px;}
+
+/* Chat */
+.g-chat{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px 140px;}
+
+/* Messages */
+.msg-row{display:flex;gap:8px;margin-bottom:14px;animation:msgIn .35s ease both;}
+.msg-row.player{flex-direction:row-reverse;}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg-avi{width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+  font-family:'Playfair Display',serif;color:#fff;align-self:flex-end;}
+.msg-body{max-width:78%;}
+.msg-sender{font-size:10px;color:var(--muted);margin-bottom:4px;letter-spacing:.5px;}
+.msg-row.player .msg-sender{text-align:right;}
+.msg-bubble{padding:11px 14px;border-radius:4px 16px 16px 16px;
+  font-size:13.5px;line-height:1.75;position:relative;}
+.msg-row.npc .msg-bubble{background:var(--card2);border:1px solid var(--border);color:var(--text);}
+.msg-row.player .msg-bubble{background:rgba(37,99,235,.18);border:1px solid rgba(96,165,250,.2);
+  color:var(--blue3);border-radius:16px 4px 16px 16px;}
+.msg-row.system .msg-bubble{background:rgba(201,164,100,.07);border:1px solid rgba(201,164,100,.15);
+  color:rgba(201,164,100,.75);border-radius:10px;font-family:'Noto Serif SC',serif;font-size:12px;
+  line-height:1.9;font-style:italic;}
+.msg-row.system{justify-content:center;}
+.msg-row.system .msg-body{max-width:92%;}
+.msg-bubble .stat-tag{display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;padding:2px 7px;border-radius:8px;margin-top:6px;margin-right:4px;}
+.stat-tag.up{color:#3dbc8a;background:rgba(61,188,138,.1);}
+.stat-tag.down{color:#e05252;background:rgba(224,82,82,.1);}
+.stat-tags{margin-top:4px;}
+
+/* Scene block */
+.scene-block{background:rgba(201,164,100,.06);border-left:2px solid var(--gold);
+  border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:14px;
+  font-family:'Noto Serif SC',serif;font-size:12px;line-height:2;
+  color:rgba(201,164,100,.75);animation:msgIn .35s ease both;}
+
+/* Event cards */
+.event-card{background:var(--card);border:1px solid var(--border2);border-radius:14px;
+  padding:16px;margin-bottom:14px;animation:msgIn .35s ease both;}
+.event-card .ev-type{font-size:9px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+.event-card .ev-title{font-size:14px;color:var(--white);font-weight:500;margin-bottom:6px;}
+.event-card .ev-body{font-size:12px;color:var(--text2);line-height:1.7;}
+
+/* Group chat */
+.group-header{display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:var(--card2);border-radius:10px 10px 0 0;border:1px solid var(--border);
+  border-bottom:none;margin-bottom:0;font-size:12px;color:var(--text2);}
+.group-body{background:var(--card);border:1px solid var(--border);border-radius:0 0 10px 10px;
+  padding:10px 14px;margin-bottom:14px;}
+.group-msg{display:flex;gap:6px;margin-bottom:8px;}
+.group-msg-avi{width:24px;height:24px;border-radius:50%;background:var(--card2);
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text2);flex-shrink:0;}
+.group-msg-body .gm-name{font-size:10px;color:var(--blue3);margin-bottom:2px;}
+.group-msg-body .gm-text{font-size:12px;color:var(--text);line-height:1.6;}
+
+/* Phone call */
+.phone-card{background:linear-gradient(160deg,#0d2040,#0a1628);
+  border:1px solid var(--border2);border-radius:18px;padding:24px 20px;
+  margin-bottom:14px;text-align:center;animation:msgIn .35s ease both;}
+.phone-icon{font-size:36px;margin-bottom:10px;}
+.phone-name{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);margin-bottom:4px;}
+.phone-status{font-size:11px;color:var(--blue3);letter-spacing:2px;margin-bottom:16px;}
+.phone-transcript{text-align:left;font-size:12px;line-height:1.9;color:var(--text2);
+  background:rgba(0,0,0,.2);border-radius:10px;padding:12px;}
+
+/* Night SMS */
+.sms-card{background:linear-gradient(160deg,#1a0d2a,#0d1629);
+  border:1px solid rgba(120,80,160,.3);border-radius:14px;padding:16px;
+  margin-bottom:14px;animation:msgIn .35s ease both;}
+.sms-time{font-size:10px;color:rgba(180,120,220,.6);text-align:center;margin-bottom:10px;letter-spacing:2px;}
+.sms-row{display:flex;gap:8px;margin-bottom:8px;}
+.sms-row.right{flex-direction:row-reverse;}
+.sms-bubble{font-size:12.5px;line-height:1.7;padding:10px 13px;border-radius:14px;max-width:80%;}
+.sms-row:not(.right) .sms-bubble{background:rgba(255,255,255,.07);color:var(--text);}
+.sms-row.right .sms-bubble{background:rgba(37,99,235,.25);color:var(--blue3);}
+
+/* Choices */
+.choices-wrap{position:fixed;bottom:0;left:0;right:0;
+  background:linear-gradient(to top,rgba(7,16,31,1) 50%,transparent);
+  padding:12px 14px 28px;z-index:20;}
+.choices-label{font-size:9px;letter-spacing:2px;color:var(--muted);text-align:center;margin-bottom:8px;}
+.choice-btn{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border2);
+  color:var(--text);padding:12px 16px;border-radius:11px;
+  font-family:'Noto Sans SC',sans-serif;font-size:13px;line-height:1.5;
+  text-align:left;cursor:pointer;margin-bottom:7px;transition:all .2s;
+  display:flex;align-items:center;gap:10px;}
+.choice-btn:last-child{margin-bottom:0;}
+.choice-btn:active{border-color:var(--blue2);background:rgba(37,99,235,.1);transform:scale(.99);}
+.choice-num{width:20px;height:20px;border-radius:50%;background:var(--border2);
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);flex-shrink:0;}
+.choice-hint{font-size:10px;padding:2px 7px;border-radius:8px;margin-left:auto;flex-shrink:0;}
+.hint-sweet{background:rgba(236,72,153,.12);color:#f9a8cc;}
+.hint-risk{background:rgba(239,68,68,.12);color:#fca5a5;}
+.hint-trust{background:rgba(59,130,246,.12);color:#93c5fd;}
+.hint-bold{background:rgba(201,164,100,.12);color:var(--gold2);}
+
+/* Continue btn */
+.continue-btn{width:100%;background:transparent;border:1px solid var(--border);
+  color:var(--muted);padding:11px;border-radius:11px;font-size:13px;cursor:pointer;
+  letter-spacing:1px;transition:all .2s;}
+.continue-btn:active{border-color:var(--blue);color:var(--blue3);}
+
+/* ── MENU OVERLAY ── */
+#s-menu{background:rgba(7,16,31,.95);backdrop-filter:blur(20px);z-index:50;
+  align-items:center;justify-content:center;padding:40px 24px;}
+.menu-card{background:var(--card);border:1px solid var(--border2);border-radius:18px;
+  padding:24px;width:100%;max-width:320px;}
+.menu-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--white);
+  text-align:center;margin-bottom:20px;}
+.menu-item{width:100%;background:none;border:1px solid var(--border);border-radius:10px;
+  color:var(--text);padding:12px 16px;font-size:13px;cursor:pointer;margin-bottom:8px;
+  text-align:left;display:flex;align-items:center;gap:10px;transition:.2s;}
+.menu-item:active{background:var(--card2);}
+.menu-item .mi-icon{font-size:16px;}
+
+/* ── SAVE/LOAD ── */
+#s-save{background:rgba(7,16,31,.97);backdrop-filter:blur(20px);z-index:50;
+  align-items:center;padding:60px 20px 40px;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.save-wrap{width:100%;max-width:400px;}
+.save-h2{font-family:'Playfair Display',serif;font-size:22px;color:var(--white);margin-bottom:4px;}
+.save-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.save-slot{background:var(--card);border:1px solid var(--border2);border-radius:12px;
+  padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;cursor:pointer;}
+.save-slot:active{background:var(--card2);}
+.slot-icon{font-size:22px;}
+.slot-info .slot-title{font-size:13px;color:var(--white);}
+.slot-info .slot-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.slot-action{margin-left:auto;font-size:11px;color:var(--blue3);
+  border:1px solid rgba(96,165,250,.3);padding:4px 10px;border-radius:8px;}
+
+/* ── ENDING SCREEN ── */
+#s-ending{background:var(--navy);align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center;}
+.ending-badge{font-size:64px;margin-bottom:20px;animation:fadeUp .8s both;}
+.ending-title{font-family:'Playfair Display',serif;font-size:30px;color:var(--white);
+  margin-bottom:12px;animation:fadeUp .8s .15s both;}
+.ending-sub{font-size:13px;color:var(--gold);letter-spacing:2px;margin-bottom:20px;
+  animation:fadeUp .8s .3s both;}
+.ending-desc{font-size:14px;color:var(--text2);line-height:2;max-width:340px;
+  margin-bottom:36px;animation:fadeUp .8s .45s both;white-space:pre-line;}
+.ending-stats{display:flex;gap:20px;justify-content:center;margin-bottom:32px;
+  animation:fadeUp .8s .6s both;}
+.e-stat{text-align:center;}
+.e-stat-num{font-family:'Playfair Display',serif;font-size:28px;color:var(--blue3);}
+.e-stat-label{font-size:10px;color:var(--muted);letter-spacing:1px;}
+
+/* ── LOADING ── */
+.loading-dots{display:flex;gap:5px;padding:12px 16px;background:var(--card2);
+  border:1px solid var(--border);border-radius:4px 14px 14px 14px;width:fit-content;}
+.loading-dots span{width:6px;height:6px;background:var(--muted);border-radius:50%;
+  animation:dp 1.2s ease infinite;}
+.loading-dots span:nth-child(2){animation-delay:.2s;}
+.loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dp{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* ── TRANSITIONS ── */
+.screen{transition:opacity .3s;}
+.screen:not(.active){opacity:0;pointer-events:none;}
+
+/* ── UTILS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.divider{height:1px;background:var(--border);margin:12px 0;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* ── CHAPTER TITLE OVERLAY ── */
+.chapter-overlay{position:fixed;inset:0;background:rgba(7,16,31,.95);z-index:100;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px;pointer-events:none;opacity:0;transition:opacity .5s;}
+.chapter-overlay.show{opacity:1;}
+.chapter-overlay.hide{opacity:0;}
+.co-num{font-size:11px;letter-spacing:5px;color:var(--gold);margin-bottom:12px;text-transform:uppercase;}
+.co-title{font-family:'Playfair Display',serif;font-size:clamp(26px,7vw,42px);color:var(--white);
+  line-height:1.2;margin-bottom:10px;}
+.co-sub{font-size:13px;color:var(--blue3);letter-spacing:2px;}
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+
+<!-- CHAPTER OVERLAY -->
+<div class="chapter-overlay" id="chapterOverlay">
+  <div class="co-num" id="coNum"></div>
+  <div class="co-title" id="coTitle"></div>
+  <div class="co-sub" id="coSub"></div>
+</div>
+
+<!-- ═══════════════ TITLE ═══════════════ -->
+<div class="screen active" id="s-title">
+  <div class="title-stars" id="titleStars"></div>
+  <div class="title-eyebrow">THE BOYZ · PARALLEL WORLD</div>
+  <h1 class="title-h1">与<em>你</em><br>相遇</h1>
+  <p class="title-jp">平行世界 · 与他相遇</p>
+  <p class="title-desc">你只是一个普通人。<br>他的世界有镁光灯、有合约、有数万双眼睛盯着他。<br>你们之间隔着很多东西——<br>但某个深夜，他还是给你发了消息。</p>
+  <button class="btn-primary" onclick="goTo('s-member')">开始故事</button>
+</div>
+
+<!-- ═══════════════ MEMBER SELECT ═══════════════ -->
+<div class="screen" id="s-member">
+  <div class="setup-back">
+    <button class="back-btn" onclick="goTo('s-title')">←</button>
+    <span class="setup-label">选择角色</span>
+  </div>
+  <div class="setup-wrap" style="padding-top:70px;">
+    <h2 class="setup-h2">他是谁？</h2>
+    <p class="setup-sub">选择 THE BOYZ 的一位成员，故事将围绕你们展开。</p>
+    <div class="member-grid" id="memberGrid"></div>
+    <button class="btn-primary" style="width:100%;margin-top:4px;" onclick="confirmMember()" id="btnConfirmMember" disabled>确认选择</button>
+  </div>
+</div>
+
+<!-- ═══════════════ IDENTITY SELECT ═══════════════ -->
+<div class="screen" id="s-identity">
+  <div class="setup-back">
+    <button class="back-btn" onclick="goTo('s-member')">←</button>
+    <span class="setup-label">选择身份</span>
+  </div>
+  <div class="setup-wrap" style="padding-top:70px;">
+    <h2 class="setup-h2">你是谁？</h2>
+    <p class="setup-sub">你的身份决定了你们相遇的方式，以及你在他世界里的角色。</p>
+    <div class="identity-list" id="identityList"></div>
+    <button class="btn-primary" style="width:100%;margin-top:4px;" onclick="startGame()" id="btnConfirmId" disabled>进入故事</button>
+  </div>
+</div>
+
+<!-- ═══════════════ GAME ═══════════════ -->
+<div class="screen" id="s-game">
+  <div class="g-header">
+    <div class="g-header-left">
+      <div class="g-member-name" id="gMemberName">—</div>
+      <div class="g-chapter" id="gChapter">第一章</div>
+    </div>
+    <div class="g-stats">
+      <div class="g-stat">
+        <div class="g-stat-label">好感</div>
+        <div class="g-stat-bar"><div class="g-stat-fill fill-aff" id="fAff" style="width:20%"></div></div>
+        <div class="g-stat-num" id="nAff">20</div>
+      </div>
+      <div class="g-stat">
+        <div class="g-stat-label">信任</div>
+        <div class="g-stat-bar"><div class="g-stat-fill fill-trust" id="fTrust" style="width:20%"></div></div>
+        <div class="g-stat-num" id="nTrust">20</div>
+      </div>
+      <div class="g-stat">
+        <div class="g-stat-label">风险</div>
+        <div class="g-stat-bar"><div class="g-stat-fill fill-risk" id="fRisk" style="width:10%"></div></div>
+        <div class="g-stat-num" id="nRisk">10</div>
+      </div>
+    </div>
+    <button class="g-menu-btn" onclick="goTo('s-menu')">☰</button>
+  </div>
+  <div class="g-chat" id="gChat"></div>
+  <div class="choices-wrap" id="choicesWrap" style="display:none;">
+    <div class="choices-label">——— 你的选择 ———</div>
+    <div id="choicesList"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ MENU ═══════════════ -->
+<div class="screen" id="s-menu" style="display:none;">
+  <div class="menu-card">
+    <div class="menu-title">菜单</div>
+    <button class="menu-item" onclick="goTo('s-game')"><span class="mi-icon">▶</span>继续游戏</button>
+    <button class="menu-item" onclick="showSave('save')"><span class="mi-icon">💾</span>保存进度</button>
+    <button class="menu-item" onclick="showSave('load')"><span class="mi-icon">📂</span>读取存档</button>
+    <div class="divider"></div>
+    <button class="menu-item" onclick="confirmRestart()"><span class="mi-icon">↺</span>重新开始</button>
+  </div>
+</div>
+
+<!-- ═══════════════ SAVE/LOAD ═══════════════ -->
+<div class="screen" id="s-save" style="display:none;">
+  <div class="setup-back">
+    <button class="back-btn" onclick="goTo('s-menu')">←</button>
+    <span class="setup-label" id="saveModeLabel">保存</span>
+  </div>
+  <div class="save-wrap" style="padding-top:70px;">
+    <h2 class="save-h2" id="saveTitle">保存进度</h2>
+    <p class="save-sub">共3个存档槽</p>
+    <div id="slotList"></div>
+    <button class="btn-primary" style="width:100%;margin-top:8px;background:transparent;border:1px solid var(--border);box-shadow:none;" onclick="goTo('s-menu')">返回</button>
+  </div>
+</div>
+
+<!-- ═══════════════ ENDING ═══════════════ -->
+<div class="screen" id="s-ending" style="display:none;">
+  <div class="ending-badge" id="eBadge">✦</div>
+  <div class="ending-title" id="eTitle">故事结束</div>
+  <div class="ending-sub" id="eSub"></div>
+  <div class="ending-desc" id="eDesc"></div>
+  <div class="ending-stats">
+    <div class="e-stat"><div class="e-stat-num" id="eFinal1">—</div><div class="e-stat-label">最终好感</div></div>
+    <div class="e-stat"><div class="e-stat-num" id="eFinal2">—</div><div class="e-stat-label">最终信任</div></div>
+    <div class="e-stat"><div class="e-stat-num" id="eFinal3">—</div><div class="e-stat-label">共历章节</div></div>
+  </div>
+  <button class="btn-primary" onclick="hardRestart()">重新开始</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// DATA: MEMBERS
+// ══════════════════════════════════════════════════════
+const MEMBERS = [
+  {id:'sangyeon',name:'Sangyeon',kr:'상연',color:'#3b82f6',
+   desc:'队长，成熟稳重，有点距离感，极度负责任',
+   personality:'内敛，话不多但每句都有分量，对感情极度谨慎'},
+  {id:'jacob',name:'Jacob',kr:'제이콥',color:'#10b981',
+   desc:'温柔的加拿大人，总是认真倾听，有治愈感',
+   personality:'暖男，但偶尔流露出思乡的孤独，情感细腻'},
+  {id:'younghoon',name:'Younghoon',kr:'영훈',color:'#8b5cf6',
+   desc:'话不多但眼神很深，努力的实力派演员',
+   personality:'沉默寡言，却在某个瞬间让人心动'},
+  {id:'hyunjae',name:'Hyunjae',kr:'현재',color:'#f59e0b',
+   desc:'表面玩世不恭，实则极其认真，嘴硬心软',
+   personality:'毒舌但护短，吃醋了绝对不会承认'},
+  {id:'juyeon',name:'Juyeon',kr:'주연',color:'#ec4899',
+   desc:'训练刻苦，不善表达情绪，用行动代替语言',
+   personality:'沉默型，但行动比任何人都细腻体贴'},
+  {id:'kevin',name:'Kevin',kr:'케빈',color:'#06b6d4',
+   desc:'话多活泼，多语言能力者，但内心细腻敏感',
+   personality:'外向但怕受伤，用活泼掩盖不安'},
+  {id:'new',name:'New',kr:'뉴',color:'#6366f1',
+   desc:'外表冷淡，偶尔流露真心，厨艺极好',
+   personality:'冷面暖心，刀子嘴豆腐心'},
+  {id:'q',name:'Q',kr:'큐',color:'#d946ef',
+   desc:'艺术气质，喜欢观察别人，充满神秘感',
+   personality:'艺术家敏感，能看穿别人情绪'},
+  {id:'haknyeon',name:'Ju Haknyeon',kr:'주학년',color:'#14b8a6',
+   desc:'努力克服过去，敏感而坚韧，格外珍惜身边的人',
+   personality:'需要被认可，但给出的爱极深'},
+  {id:'sunwoo',name:'Sunwoo',kr:'선우',color:'#f97316',
+   desc:'直率毒舌，但对在乎的人极温柔',
+   personality:'外冷内热，恋爱时反差萌'},
+  {id:'eric',name:'Eric',kr:'에릭',color:'#a855f7',
+   desc:'最年轻，爱闹但认真时让人心动',
+   personality:'外表孩子气，内心比谁都成熟'}
+];
+
+const IDENTITIES = [
+  {id:'barista',icon:'☕',title:'咖啡师',sub:'你在首尔梨泰院开了一家小咖啡店。\n某天一个戴帽子的男人走进来，点了一杯美式。'},
+  {id:'writer',icon:'✍️',title:'文字工作者',sub:'你为某杂志写专栏，偶尔做娱乐圈边缘采访。\n你们在一次非正式发布会上擦肩而过。'},
+  {id:'photo',icon:'📸',title:'摄影师',sub:'你是一名独立摄影师。\n经纪公司需要一名临时跟拍，你意外接到了这个工作。'},
+  {id:'trainer',icon:'🎵',title:'音乐制作人',sub:'你为独立乐队做后期混音，偶尔接私活。\n他在录音室找到了你，说想尝试新风格。'},
+  {id:'stylist',icon:'✂️',title:'助理造型师',sub:'你刚入行，在某设计师工作室做助理。\n你第一次的大工作，是给他们的新专辑视觉做造型协助。'}
+];
+
+// ══════════════════════════════════════════════════════
+// STORY ENGINE
+// ══════════════════════════════════════════════════════
+// Each node: {id, type, content, choices}
+// type: scene | msg_npc | msg_player | event | group | sms | phone | chapter | ending
+// choices: [{text, hint, effects:{aff,trust,risk}, next}]
+// effects applied to state before going next
+
+function buildStory(memberId, memberName, memberKr, memberColor, identityId) {
+  const ID = memberName;
+  const KR = memberKr;
+  const you = '你';
+  const IDENTITY_INTROS = {
+    barista:`梨泰院的雨季。你的小咖啡馆今天只有两桌客人。`,
+    writer:`你约好了今天去采访一个不算知名的独立乐队，却走错了楼层。`,
+    photo:`你背着相机包坐地铁，手边是刚刚接到的工作合同。`,
+    trainer:`凌晨十二点，录音室的灯还亮着。`,
+    stylist:`你拿着衣架和便利贴走进了你人生第一个大型艺人棚拍现场。`
+  };
+  const intro = IDENTITY_INTROS[identityId] || '首尔，某个普通的下午。';
+
+  // Helper
+  const npc = (text, aff=0, trust=0, risk=0, id='') => ({
+    id: id||Math.random().toString(36).slice(2),
+    type:'msg_npc', text, aff, trust, risk
+  });
+  const you_ = (text, id='') => ({
+    id: id||Math.random().toString(36).slice(2),
+    type:'msg_player', text
+  });
+  const scene = (text, id='') => ({
+    id: id||Math.random().toString(36).slice(2),
+    type:'scene', text
+  });
+  const ev = (evType, title, body, id='') => ({
+    id: id||Math.random().toString(36).slice(2),
+    type:'event', evType, title, body
+  });
+  const grp = (title, msgs, id='') => ({
+    id: id||Math.random().toString(36).slice(2),
+    type:'group', title, msgs
+  });
+  const sms = (time, messages, id='') => ({
+    id: id||Math.random().toString(36).slice(2),
+    type:'sms', time, messages
+  });
+  const phone_ = (status, transcript, id='') => ({
+    id: id||Math.random().toString(36).slice(2),
+    type:'phone', status, transcript
+  });
+  const choice = (text, hint, effects, next) => ({text, hint, effects, next});
+  const chap = (num, title, sub, id='') => ({
+    id: id||Math.random().toString(36).slice(2),
+    type:'chapter', num, title, sub
+  });
+
+  const story = {
+    nodes: {},
+    start: 'ch1_start'
+  };
+
+  const add = (...nodes) => {
+    nodes.forEach(n => { story.nodes[n.id] = n; });
+  };
+
+  // ══════════════════════════════════════
+  // 身份路由 — 第1章入口
+  // ══════════════════════════════════════
+  add(
+    { id:'ch1_start', type:'chapter_gate',
+      chap:chap('第一章','偶然相遇','首尔，某个普通的下午，某些事情悄悄开始了'),
+      next: identityId==='barista'  ? 'id_bar_1a'
+          : identityId==='writer'   ? 'id_wri_1a'
+          : identityId==='photo'    ? 'id_pho_1a'
+          : identityId==='trainer'  ? 'id_tra_1a'
+          :                           'id_sty_1a'
+    }
+  );
+
+  // ══════════════════════════════════════
+  // ☕ 身份A：咖啡师
+  // ══════════════════════════════════════
+  add(
+    { id:'id_bar_1a', type:'seq', items:[
+      scene('梨泰院，雨季。你的咖啡馆今天客人稀稀落落，窗玻璃上满是水雾。你用布擦了第三遍，想着今天大概就这样了。'),
+      scene('门开了，带着一股湿润的空气。进来的人戴着棒球帽，帽檐压得很低，口袋里插着手，明显不想被认出来。但你还是认出了他。'),
+      npc(`……这里有位子吗。`,3,0,0),
+    ], choices:[
+      choice('当然，随便坐。（若无其事）', 'trust', {aff:4,trust:7,risk:0}, 'id_bar_1b_calm'),
+      choice('（假装没认出他）靠窗还有空位。', 'trust', {aff:3,trust:9,risk:0}, 'id_bar_1b_calm'),
+      choice('你是……${ID}吧？', 'bold', {aff:2,trust:0,risk:6}, 'id_bar_1b_oops'),
+    ]},
+
+    { id:'id_bar_1b_calm', type:'seq', items:[
+      scene('他摘下帽子，在角落坐下，扫了你一眼，像是在确认你不会骚扰他。你没有多说话，端了他点的美式过去，就走开了。'),
+      npc(`……你不好奇？`,5,3,0),
+      you_(`好奇什么？你只是一个客人。`),
+      npc(`（轻轻笑了一下）……好。`,7,6,0),
+      scene('他坐了将近一小时。走的时候把杯子推到了你这边，说了声谢谢。很普通的谢谢，但你莫名记住了他说话的语气。'),
+    ], choices:[
+      choice('（什么都没说，目送他离开）', 'trust', {aff:5,trust:8,risk:0}, 'id_bar_1c'),
+      choice('（说）下次还来的话，我记你的口味。', 'sweet', {aff:9,trust:5,risk:0}, 'id_bar_1c'),
+    ]},
+
+    { id:'id_bar_1b_oops', type:'seq', items:[
+      scene('他的表情变了，不是愤怒，是一种见怪不怪的疲倦。'),
+      npc(`……能不能当作没看见我。`,0,-2,5),
+      you_(`（停顿）……美式还是拿铁？`),
+      scene('他愣了一下，然后若无其事坐下了。'),
+      npc(`美式。（顿了顿）……谢谢。`,4,4,0),
+    ], choices:[
+      choice('（之后当他是普通客人，不再特别对待）', 'trust', {aff:4,trust:8,risk:-2}, 'id_bar_1c'),
+      choice('（忍不住偷拍了一张发朋友圈）', 'risk', {aff:-5,trust:-8,risk:18}, 'id_bar_1c_bad'),
+    ]},
+
+    { id:'id_bar_1c_bad', type:'seq', items:[
+      ev('⚠️ 舆论事件','照片意外流出','你以为朋友圈只有熟人看到。没想到两小时后，截图已经传开了。他的经纪人打来电话，语气很冷。他第二天没有再来。'),
+      scene('那段时间你很后悔。你把朋友圈删了，但有些东西，删不掉。'),
+    ], choices:[
+      choice('（继续开店，等着，也许他还会来）', 'trust', {aff:-3,trust:-6,risk:6}, 'id_bar_2a'),
+    ]},
+
+    { id:'id_bar_1c', type:'seq', items:[
+      scene('他走了。你擦了桌子，收了杯子，像往常一样关上灯。只是走到门口时，你停了一下。窗外还在下雨。'),
+      scene('三天后，他又来了。'),
+    ], choices:[
+      choice('（像什么都没发生，正常迎客）', 'trust', {aff:5,trust:8,risk:0}, 'id_bar_2a'),
+      choice('（有点紧张，手抖了一下）', 'sweet', {aff:8,trust:5,risk:0}, 'id_bar_2a'),
+    ]},
+
+    // 咖啡师 第二章
+    { id:'id_bar_2a', type:'chapter_gate', chap:chap('第二章','常客','每周三，雨天居多。他总是在快关门前来。'), next:'id_bar_2b'},
+    { id:'id_bar_2b', type:'seq', items:[
+      scene('他开始每周来一两次，总是压着关门时间。你们逐渐有了不用开口就能理解的默契——他来，你端咖啡，他坐着，你忙你的。'),
+      npc(`今天有什么推荐？`,5,3,0),
+      you_(`埃塞俄比亚新豆，偏果酸，手冲。`),
+      npc(`那来一杯。（停）你懂这些？`,4,4,0),
+      you_(`开店的嘛，懂一点。`),
+      npc(`（表情有点不一样）……有趣。`,6,5,0),
+      scene('那天他多坐了一小时。临走时把空杯子推过来，低声说：'),
+      npc(`……我叫${ID}。`,8,6,0),
+      you_(`我知道。`),
+      npc(`（轻声笑）那你叫什么？`,7,5,0),
+      scene('你告诉了他你的名字。他重复了一遍，像是在记。'),
+    ], choices:[
+      choice('（心里有点说不清楚的感觉）', 'sweet', {aff:8,trust:6,risk:0}, 'id_bar_2c'),
+      choice('（不动声色，继续擦桌子）', 'trust', {aff:5,trust:9,risk:0}, 'id_bar_2c'),
+    ]},
+
+    { id:'id_bar_2c', type:'seq', items:[
+      sms('当天晚上 23:47',[
+        {right:false,text:`今天的咖啡很好喝。`},
+        {right:true, text:`……你怎么有我的号码？`},
+        {right:false,text:`你收据上有联系方式，我存了。预约用的。`},
+        {right:true, text:`……预约。`},
+        {right:false,text:`对啊。`},
+        {right:true, text:`（很久之后）……下周三。`},
+        {right:false,text:`几点？`},
+        {right:true, text:`关门前。`},
+        {right:false,text:`知道了。`},
+        {right:true, text:`……晚安。`},
+      ]),
+      scene('你盯着那条"晚安"，在黑暗里笑了很久。'),
+    ], choices:[
+      choice('（期待下周三）', 'sweet', {aff:10,trust:7,risk:0}, 'id_bar_3a'),
+      choice('（告诉自己不要想太多）', 'trust', {aff:6,trust:9,risk:0}, 'id_bar_3a'),
+    ]},
+
+    // 咖啡师 第三章：吃醋
+    { id:'id_bar_3a', type:'chapter_gate', chap:chap('第三章','多出来的人','有时候一个人走进来，整个空气都变了。'), next:'id_bar_3b'},
+    { id:'id_bar_3b', type:'seq', items:[
+      scene('那天他带了一个朋友，一个比他高、笑起来很好看的男生。一开口，英语韩语夹杂。'),
+      npc(`（Kevin）哇这家店好可爱！${ID}哥你没骗我。老板你好！`,3,2,0),
+      scene(`${ID}靠在椅背上没接话，只是看着你和Kevin说话，表情淡淡的，说不清是什么感觉。`),
+      npc(`（${ID}，很平静）……她不是老板，是咖啡师。`,5,3,0),
+      you_(`我两个都是。`),
+      npc(`（Kevin）哈哈哈好喜欢！${ID}哥这朋友交得好啊。`,3,2,0),
+      scene(`${ID}低下头，用手机屏幕挡了挡脸。`),
+    ], choices:[
+      choice('（对Kevin热情，聊了很多）', 'sweet', {aff:-3,trust:2,risk:3}, 'id_bar_3c_jeal'),
+      choice('（对两人一视同仁，专业接待）', 'trust', {aff:3,trust:8,risk:0}, 'id_bar_3c_ok'),
+      choice('（不经意间，眼神一直落在${ID}身上）', 'sweet', {aff:10,trust:5,risk:0}, 'id_bar_3c_ok'),
+    ]},
+
+    { id:'id_bar_3c_jeal', type:'seq', items:[
+      sms('当晚 22:15',[
+        {right:false,text:`那个Kevin，你们认识很久了吗？`},
+        {right:true, text:`还好，一两年。`},
+        {right:false,text:`他很有趣。`},
+        {right:true, text:`……嗯。`},
+        {right:false,text:`怎么了，不高兴？`},
+        {right:true, text:`没有。（良久）……只是觉得你和他话比和我多。`},
+        {right:false,text:`……你在吃醋啊。`},
+        {right:true, text:`我没有。`},
+        {right:false,text:`好好好，没有。`},
+        {right:true, text:`……哼。`},
+      ]),
+      scene('你盯着那个"哼"字，在被窝里笑了很久。'),
+    ], choices:[
+      choice('（回复：其实我眼睛一直在看你）', 'sweet', {aff:14,trust:6,risk:0}, 'ch4_start'),
+      choice('（回复：那你下次别带他来不就好了）', 'bold', {aff:10,trust:5,risk:2}, 'ch4_start'),
+    ]},
+
+    { id:'id_bar_3c_ok', type:'seq', items:[
+      scene('Kevin走的时候多回头看了你几眼，说"好想再来"。'),
+      scene(`${ID}走在他前面，没回头，但脚步快了一点。`),
+      sms('当晚 23:02',[
+        {right:false,text:`你朋友很有趣。`},
+        {right:true, text:`嗯。`},
+        {right:false,text:`你今天话好少。`},
+        {right:true, text:`我一直话少。`},
+        {right:false,text:`跟我说话的时候不少。`},
+        {right:true, text:`……（沉默很久）睡了。晚安。`},
+        {right:false,text:`……晚安。`},
+      ]),
+      scene('你盯着屏幕，想了很久，没想明白，也没想清楚。'),
+    ], choices:[
+      choice('（有点明白，但不敢深想）', 'sweet', {aff:10,trust:8,risk:0}, 'ch4_start'),
+    ]}
+  );
+
+  // ══════════════════════════════════════
+  // ✍️ 身份B：文字工作者
+  // ══════════════════════════════════════
+  add(
+    { id:'id_wri_1a', type:'seq', items:[
+      scene('你是一名专栏作者，偶尔接边缘娱乐圈的采访稿。今天你走错了楼层，按了错误的电梯，进了错误的走廊。'),
+      scene('然后你推开了一扇本不该属于你的门。'),
+      scene('里面有人。他站在窗边，手里拿着剧本，抬起头来看了你一眼。'),
+      npc(`……这里不对外开放。`,2,0,3),
+      you_(`我走错了，对不起。（没动）`),
+      npc(`（停顿）……你要干嘛。`,2,2,0),
+    ], choices:[
+      choice('（立刻道歉转身离开）', 'trust', {aff:3,trust:7,risk:0}, 'id_wri_1b_leave'),
+      choice('（诚实）我是记者，但今天真的走错了。', 'trust', {aff:5,trust:9,risk:2}, 'id_wri_1b_honest'),
+      choice('（假装镇定）我找王经理的办公室。', 'bold', {aff:2,trust:2,risk:4}, 'id_wri_1b_lie'),
+    ]},
+
+    { id:'id_wri_1b_leave', type:'seq', items:[
+      scene('你转身走了，什么都没说。但在走廊里你停下来，把门轻轻带上，动作很轻，像是怕打扰到他。'),
+      scene('下楼的时候，电梯里你拿出手机，没有打开任何记者群。'),
+      scene('三天后，你的编辑发来一个采访需求——正是他的组合。联系人备注：请找${ID}本人确认采访意向。'),
+      scene('你的手机震了一下，是一个陌生号码。'),
+      npc(`……是上次走错门的那个人吗。`,6,5,0),
+    ], choices:[
+      choice('（是的，这是缘分还是巧合？）', 'sweet', {aff:8,trust:7,risk:0}, 'id_wri_1c'),
+      choice('（是的，但我会保持专业。）', 'trust', {aff:5,trust:10,risk:0}, 'id_wri_1c'),
+    ]},
+
+    { id:'id_wri_1b_honest', type:'seq', items:[
+      scene('他看了你很长时间，像是在判断你说没说谎。'),
+      npc(`……记者。`,0,0,4),
+      you_(`专栏作者。不一样。我不写那种稿子。`),
+      npc(`（沉默）……有什么区别。`,2,2,0),
+      you_(`区别是，我不在乎你今天穿了什么，吃了什么，和谁一起待了多久。`),
+      scene('他又看了你一眼，这次表情有些不同。'),
+      npc(`（轻声）……那你在乎什么？`,6,6,0),
+    ], choices:[
+      choice('（说）我在乎人说话时眼睛看哪里。', 'sweet', {aff:10,trust:8,risk:0}, 'id_wri_1c'),
+      choice('（说）和你无关。我先走了。', 'trust', {aff:4,trust:9,risk:0}, 'id_wri_1c'),
+    ]},
+
+    { id:'id_wri_1b_lie', type:'seq', items:[
+      scene('他看了你一眼，平静地说：'),
+      npc(`王经理在三楼。`,0,0,0),
+      scene('你没有动。'),
+      npc(`（停顿，语气变得有趣了一点）……你根本不认识王经理。`,4,3,0),
+      you_(`……走错了，对不起。`),
+      npc(`（轻笑）诚实挺好的。`,5,5,0),
+    ], choices:[
+      choice('（灰溜溜但没失去体面地道谢走了）', 'trust', {aff:5,trust:7,risk:0}, 'id_wri_1c'),
+    ]},
+
+    { id:'id_wri_1c', type:'seq', items:[
+      scene('几天后，你接到了采访他的正式委托。'),
+      scene('你打开那扇同样的门，他坐在里面，看到你，停了一下。'),
+      npc(`……又是你。`,5,4,0),
+      you_(`这次走对了。`),
+      npc(`（嘴角动了一下）……坐吧。`,6,5,0),
+    ], choices:[
+      choice('（开始正式采访，保持专业距离）', 'trust', {aff:5,trust:10,risk:0}, 'id_wri_2a'),
+      choice('（采访前先道了一次歉）', 'sweet', {aff:8,trust:8,risk:0}, 'id_wri_2a'),
+    ]},
+
+    // 文字工作者 第二章
+    { id:'id_wri_2a', type:'chapter_gate', chap:chap('第二章','采访之外','有些话说出来是稿子，没说出来的，是别的东西。'), next:'id_wri_2b'},
+    { id:'id_wri_2b', type:'seq', items:[
+      scene('采访进行得很顺利。他回答问题很简洁，不废话，但每一句都准确。你记录着，心里想，这个人说话的方式和你见过的大多数艺人不一样。'),
+      npc(`你的问题……和别人不太一样。`,6,5,0),
+      you_(`怎么个不一样？`),
+      npc(`别人问我喜欢什么颜色，你问我最近看了什么书。`,5,6,0),
+      you_(`回答呢？`),
+      npc(`（停顿，轻声）……村上春树。你看吗？`,7,7,0),
+      you_(`看。《挪威的森林》还是《1Q84》？`),
+      npc(`（抬眼）……你怎么知道是这两本。`,8,7,0),
+      scene('采访结束后，他没有马上走，而是在你整理录音笔的时候，随口问：'),
+      npc(`你的稿子，会写什么。`,5,6,0),
+    ], choices:[
+      choice('（说）我会写你说话的方式。', 'sweet', {aff:10,trust:7,risk:0}, 'id_wri_2c'),
+      choice('（说）你看到成稿再说，我不剧透。', 'trust', {aff:6,trust:9,risk:0}, 'id_wri_2c'),
+    ]},
+
+    { id:'id_wri_2c', type:'seq', items:[
+      scene('稿子发出去的那天晚上，你收到了一条消息。'),
+      sms('稿子发出当晚 22:31',[
+        {right:false,text:`稿子我看了。`},
+        {right:true, text:`……怎么样？`},
+        {right:false,text:`你写了我说话的方式。`},
+        {right:true, text:`……嗯。（停顿）我不知道你真的会写。`},
+        {right:false,text:`我说话算数。`},
+        {right:true, text:`（良久）……下次还有采访吗。`},
+        {right:false,text:`看编辑安排。为什么？`},
+        {right:true, text:`（更久之后）……没什么。晚安。`},
+        {right:false,text:`晚安。`},
+      ]),
+    ], choices:[
+      choice('（盯着那条"没什么"想了很久）', 'sweet', {aff:10,trust:8,risk:0}, 'id_wri_3a'),
+    ]},
+
+    // 文字工作者 第三章
+    { id:'id_wri_3a', type:'chapter_gate', chap:chap('第三章','越界的地方','采访关系有它的边界，但边界这种东西，有时候很难说清楚。'), next:'id_wri_3b'},
+    { id:'id_wri_3b', type:'seq', items:[
+      scene('第二次采访是在咖啡馆，他选的地方——一家很安静的小店，几乎没有其他人。'),
+      scene('但他带了一个朋友，说是顺路的。那个朋友叫Kevin，话很多，笑起来很好看，全程不停地和你聊天。'),
+      npc(`（Kevin）哇你是写${ID}那篇稿子的人！我看了，写得超好！你们是怎么认识的？`,3,2,0),
+      scene(`${ID}喝着咖啡，眼神从Kevin脸上移到你脸上，又移开，表情很淡，看不出在想什么。`),
+      you_(`采访认识的。`),
+      npc(`（Kevin）哎那采访我啊！我也有很多话说！`,2,2,0),
+      npc(`（${ID}，平静地打断）她是来采访我的。`,6,4,0),
+    ], choices:[
+      choice('（对Kevin说：下次有机会。）', 'trust', {aff:5,trust:7,risk:0}, 'id_wri_3c_ok'),
+      choice('（看向${ID}，说）你在保护采访资源？', 'bold', {aff:10,trust:5,risk:2}, 'id_wri_3c_jeal'),
+    ]},
+
+    { id:'id_wri_3c_jeal', type:'seq', items:[
+      scene('他愣了一下，然后很快低下头。Kevin在旁边"哦哦哦"地笑。'),
+      npc(`（Kevin）${ID}哥这是在吃醋啊！`,3,2,3),
+      npc(`（${ID}，冷着脸）你喝你的咖啡。`,4,3,0),
+      scene('你忍住了笑，低头翻了翻录音笔，假装在整理设备。'),
+      sms('当晚 23:40',[
+        {right:false,text:`今天谢谢你接受采访。`},
+        {right:true, text:`嗯。`},
+        {right:false,text:`Kevin很有趣。`},
+        {right:true, text:`……他话太多了。`},
+        {right:false,text:`哈哈，他在你面前说了很多你的事。`},
+        {right:true, text:`（沉默很久）……他说了什么。`},
+        {right:false,text:`说你其实很在乎别人的看法，但从不说出来。`},
+        {right:true, text:`……（更久的沉默）那不准写进稿子。`},
+        {right:false,text:`放心，我不写不该写的。`},
+        {right:true, text:`……嗯。（停）谢谢。`},
+      ]),
+    ], choices:[
+      choice('（这条谢谢，感觉和采访的那声谢谢不一样）', 'sweet', {aff:14,trust:8,risk:0}, 'ch4_start'),
+    ]},
+
+    { id:'id_wri_3c_ok', type:'seq', items:[
+      sms('当晚 23:10',[
+        {right:false,text:`你今天带Kevin来，是特意的吗？`},
+        {right:true, text:`……为什么这么想。`},
+        {right:false,text:`感觉像是带了一个缓冲器。`},
+        {right:true, text:`（沉默）……你看人很准。`},
+        {right:false,text:`那为什么？`},
+        {right:true, text:`（很久）……因为我不知道，单独见你，我会不会说太多不该说的话。`},
+        {right:false,text:`……（心跳漏了半拍）`},
+        {right:true, text:`晚安。`},
+      ]),
+    ], choices:[
+      choice('（这条消息，你看了很多遍）', 'sweet', {aff:13,trust:10,risk:0}, 'ch4_start'),
+    ]}
+  );
+
+  // ══════════════════════════════════════
+  // 📸 身份C：摄影师
+  // ══════════════════════════════════════
+  add(
+    { id:'id_pho_1a', type:'seq', items:[
+      scene('你背着相机包，手里捏着一份临时工作合同，站在某公司大楼的大厅里。合同上写的是：专辑视觉跟拍，临时外聘。'),
+      scene('你对这个行业不陌生，但圈子这么深，你还是第一次进来。'),
+      scene('助理把你领进排练室，说"他们等一下来"，然后就走了。你独自在里面等，随手拍了几张空旷房间的照片。'),
+      scene('门开了，进来的人先看到了你的镜头。'),
+      npc(`……等等，现在可以拍吗。`,2,0,3),
+      you_(`（放下相机）对不起，习惯动作，没有开始。`),
+      npc(`（看了你一眼）……是新来的吗。`,3,2,0),
+    ], choices:[
+      choice('嗯，第一天。请多关照。', 'sweet', {aff:5,trust:6,risk:0}, 'id_pho_1b_warm'),
+      choice('（点头，举起相机示意）可以开始了吗？', 'trust', {aff:3,trust:8,risk:0}, 'id_pho_1b_pro'),
+      choice('我不会乱拍的，你放心。', 'trust', {aff:6,trust:9,risk:0}, 'id_pho_1b_pro'),
+    ]},
+
+    { id:'id_pho_1b_warm', type:'seq', items:[
+      scene('他点了点头，去换衣服了。整个上午，你一直在拍，他偶尔看镜头一眼，多数时候不理你。'),
+      scene('午休的时候，你在角落整理照片，他突然走过来，站在你身后。'),
+      npc(`……我能看吗。`,4,3,0),
+      you_(`可以。（把相机递过去）`),
+      scene('他翻了很久，没有说话。翻到一张他低头的侧脸，停下来了。'),
+      npc(`……这张，你能给我吗。`,7,6,0),
+    ], choices:[
+      choice('当然，我待会儿传给你。', 'sweet', {aff:9,trust:7,risk:0}, 'id_pho_1c'),
+      choice('（说）你喜欢什么样的？我帮你单独拍几张。', 'sweet', {aff:11,trust:6,risk:0}, 'id_pho_1c'),
+    ]},
+
+    { id:'id_pho_1b_pro', type:'seq', items:[
+      scene('他点点头，工作就开始了。你很专业，他也很专业。整个上午几乎没有多余的对话，只有快门声和偶尔的位置调整。'),
+      scene('收工前，他走到你面前，开口：'),
+      npc(`……你拍东西，不会让人觉得难受。`,6,7,0),
+      you_(`谢谢你配合。`),
+      npc(`（停顿）……不是夸你工作。是说你拍照的方式，不像在猎奇。`,8,8,0),
+    ], choices:[
+      choice('（说）相机是用来记录，不是用来侵犯的。', 'trust', {aff:8,trust:10,risk:0}, 'id_pho_1c'),
+      choice('（什么都没说，只是点了点头）', 'trust', {aff:5,trust:9,risk:0}, 'id_pho_1c'),
+    ]},
+
+    { id:'id_pho_1c', type:'seq', items:[
+      scene('工作结束后，他在门口停下来，问了你一个问题：'),
+      npc(`……你一般怎么挑照片？`,5,5,0),
+      you_(`找那种人没注意到镜头的瞬间。那种才是真的。`),
+      npc(`（看着你，停了很长时间）……嗯。（转身走了，走了两步又停）——明天还来吗。`,8,7,0),
+      you_(`合同说三天。`),
+      npc(`（背对着你）……嗯，知道了。`,6,6,0),
+    ], choices:[
+      choice('（看着他的背影，心里有点奇怪的感觉）', 'sweet', {aff:10,trust:8,risk:0}, 'id_pho_2a'),
+      choice('（若无其事收拾器材，装作没感觉）', 'trust', {aff:6,trust:9,risk:0}, 'id_pho_2a'),
+    ]},
+
+    // 摄影师 第二章
+    { id:'id_pho_2a', type:'chapter_gate', chap:chap('第二章','快门之间','镜头里的人，你看了很多遍。比你愿意承认的多。'), next:'id_pho_2b'},
+    { id:'id_pho_2b', type:'seq', items:[
+      scene('三天的工作变成了一周，然后是两周。经纪人说视觉方向很好，希望你继续合作。你签了更长的合同。'),
+      scene('你和他越来越熟悉，但这种熟悉很难描述——不是朋友，不是同事，更像是……你总是在场，他也知道你总是在场。'),
+      npc(`（某个排练间隙）你今天拍了多少张？`,5,4,0),
+      you_(`五百多。`),
+      npc(`都留着？`,4,4,0),
+      you_(`会筛，留几十张。`),
+      npc(`那被删掉的那些……也有人看吗。`,6,6,0),
+      you_(`（停顿）只有我自己。`),
+      scene('他没再说话，但你感觉他在想什么。'),
+    ], choices:[
+      choice('（问他：为什么问这个？）', 'sweet', {aff:9,trust:7,risk:0}, 'id_pho_2c'),
+      choice('（不多问，继续整理器材）', 'trust', {aff:5,trust:10,risk:0}, 'id_pho_2c'),
+    ]},
+
+    { id:'id_pho_2c', type:'seq', items:[
+      sms('当晚 00:12',[
+        {right:false,text:`你今天问那个问题，什么意思？`},
+        {right:true, text:`……哪个问题。`},
+        {right:false,text:`被删掉的照片有没有人看。`},
+        {right:true, text:`（很久之后）……想知道，有没有只属于你一个人看的我。`},
+        {right:false,text:`（手机差点掉了）`},
+        {right:true, text:`……你不用回答这个。晚安。`},
+        {right:false,text:`等等——`},
+        {right:true, text:`明天见。`},
+      ]),
+      scene('你盯着屏幕，窗外是首尔的深夜，心跳比平时快了很多。'),
+    ], choices:[
+      choice('（翻出那些没删的照片，看了很久）', 'sweet', {aff:13,trust:8,risk:0}, 'id_pho_3a'),
+    ]},
+
+    // 摄影师 第三章
+    { id:'id_pho_3a', type:'chapter_gate', chap:chap('第三章','焦距','有时候你盯着取景框，不知道自己在拍他，还是在看他。'), next:'id_pho_3b'},
+    { id:'id_pho_3b', type:'seq', items:[
+      scene('他的队友们渐渐习惯了你的存在。Kevin最先打开话匣子，总是在你镜头前比各种造型，把${ID}逗得皱眉。'),
+      npc(`（Kevin）摄影师帅哥/美女！拍我一张！`,2,2,0),
+      scene(`${ID}站在旁边，看着你应付Kevin，表情复杂，说不清是无奈还是别的什么。`),
+      npc(`（${ID}，轻声）……你不用理他。`,5,4,0),
+      npc(`（Kevin，戏剧化地捂胸口）${ID}哥！我被嫌弃了！你有私心！`,3,2,3),
+      scene(`${ID}没有解释，只是把Kevin推开，对你说：`),
+      npc(`……可以拍我们排练吗，今天下午。`,6,5,0),
+    ], choices:[
+      choice('（当然，这是工作）', 'trust', {aff:5,trust:9,risk:0}, 'id_pho_3c_ok'),
+      choice('（看了他一眼）私人的还是工作的？', 'bold', {aff:10,trust:6,risk:2}, 'id_pho_3c_jeal'),
+    ]},
+
+    { id:'id_pho_3c_jeal', type:'seq', items:[
+      scene('他愣了一下，Kevin在旁边笑得差点趴下。'),
+      npc(`（Kevin）哈哈哈哈摄影师真的很敢讲。`,3,2,2),
+      npc(`（${ID}，耳根有点红）……都行。`,8,5,0),
+      sms('当晚 23:25',[
+        {right:false,text:`你今天那个问题，把他问懵了。`},
+        {right:true, text:`……你和Kevin说我什么了。`},
+        {right:false,text:`没什么，只是问你最近状态不错。`},
+        {right:true, text:`（长时间沉默）……他乱说。`},
+        {right:false,text:`他说你每次排练都会看镜头那边一眼。`},
+        {right:true, text:`……（更长的沉默）那只是专业习惯。`},
+        {right:false,text:`我知道。`},
+        {right:true, text:`……（很久很久后）晚安。`},
+      ]),
+    ], choices:[
+      choice('（有些事，不说出来，心里比说出来更热）', 'sweet', {aff:14,trust:8,risk:0}, 'ch4_start'),
+    ]},
+
+    { id:'id_pho_3c_ok', type:'seq', items:[
+      scene('下午的排练，你拍了很多。他在镜头里很不一样——不是平时的那个人，是一个很专注、很燃的状态。'),
+      scene('收工后，他来找你看照片。翻到一张他跳舞时的侧脸，停了很久。'),
+      npc(`……我不知道我跳舞的时候是这个表情。`,6,6,0),
+      you_(`认真的人都这样。`),
+      npc(`（轻声）……谢谢你把这个记下来。`,9,9,0),
+    ], choices:[
+      choice('（心里有什么东西轻轻动了一下）', 'sweet', {aff:12,trust:10,risk:0}, 'ch4_start'),
+    ]}
+  );
+
+  // ══════════════════════════════════════
+  // 🎵 身份D：音乐制作人
+  // ══════════════════════════════════════
+  add(
+    { id:'id_tra_1a', type:'seq', items:[
+      scene('凌晨十二点，录音室的灯还亮着。你在做混音，耳机里是三遍反复的同一段鼓点，你已经分不清好不好了。'),
+      scene('门被敲了两下。你以为是送外卖的，开门才发现，对面站着一个陌生男人，手里拿着一根耳机。'),
+      npc(`……这里是独立录音工作室？`,3,2,0),
+      you_(`对，但我今天没有接单。`),
+      npc(`我知道，不是来接单的。我想……听一下你之前的作品。（停顿）是有人推荐的你。`,4,4,0),
+    ], choices:[
+      choice('（好奇）是谁推荐的？', 'sweet', {aff:5,trust:6,risk:0}, 'id_tra_1b_curious'),
+      choice('（直接）现在几点了，你知道吗。', 'bold', {aff:3,trust:4,risk:0}, 'id_tra_1b_direct'),
+      choice('（让他进来）进来坐吧。', 'trust', {aff:7,trust:7,risk:0}, 'id_tra_1b_let'),
+    ]},
+
+    { id:'id_tra_1b_curious', type:'seq', items:[
+      npc(`我朋友，他说你做出来的东西……不像是在完成任务。`,5,5,0),
+      you_(`（停顿）……这是夸奖吗？`),
+      npc(`是。（认真地）我想试试，用不一样的方式录一首歌。不是公司那种风格。`,6,6,0),
+      scene('你看了他一眼。在这个行业，大多数人说"不一样"都是在找借口。但他说这句话的时候，眼神是认真的。'),
+    ], choices:[
+      choice('（说）你先说说你想要什么感觉。', 'trust', {aff:7,trust:9,risk:0}, 'id_tra_1c'),
+      choice('（说）我先听你唱一段再说能不能合作。', 'bold', {aff:6,trust:8,risk:0}, 'id_tra_1c'),
+    ]},
+
+    { id:'id_tra_1b_direct', type:'seq', items:[
+      npc(`（轻笑）……凌晨十二点，你还在工作。`,3,3,0),
+      you_(`我是在工作，你是在打扰我工作。`),
+      npc(`（没有生气，反而来了兴趣）……你就是这样对所有人？`,4,4,0),
+      you_(`对半夜来敲门的陌生人是这样。`),
+      npc(`合理。（停顿）……那给你十分钟时间，听我说，然后你决定。`,5,6,0),
+    ], choices:[
+      choice('（靠在门边，表示你在听）', 'trust', {aff:6,trust:8,risk:0}, 'id_tra_1c'),
+    ]},
+
+    { id:'id_tra_1b_let', type:'seq', items:[
+      scene('他进来，在角落的椅子上坐下，看了一圈你的设备。'),
+      npc(`……你一个人做所有这些？`,4,4,0),
+      you_(`对。`),
+      npc(`（打量你）……不像。`,5,5,0),
+      you_(`不像什么？`),
+      npc(`不像那种能这样工作的人。（停）你看起来太……普通了。`,4,5,0),
+      you_(`普通人也可以做好音乐。`),
+      npc(`（停了很长时间）……嗯，对。（有什么东西在他表情里松开了）`,7,7,0),
+    ], choices:[
+      choice('（感觉他说的"普通"不是贬义）', 'sweet', {aff:8,trust:8,risk:0}, 'id_tra_1c'),
+    ]},
+
+    { id:'id_tra_1c', type:'seq', items:[
+      scene('第一次合作是在那间录音室，你们在里面待了将近四个小时，没有出去吃饭，靠外卖撑着。'),
+      scene('他唱了第一遍，你听完，说：再来一遍，这次闭着眼睛。'),
+      npc(`……为什么闭眼？`,4,4,0),
+      you_(`因为你一直在想你唱得好不好，我想知道你在不想这件事的时候是什么声音。`),
+      scene('他沉默了一下，然后真的闭上了眼睛。'),
+      scene('那一遍，和第一遍完全不一样。'),
+    ], choices:[
+      choice('（你知道你们会再合作的）', 'sweet', {aff:10,trust:9,risk:0}, 'id_tra_2a'),
+    ]},
+
+    // 音乐制作人 第二章
+    { id:'id_tra_2a', type:'chapter_gate', chap:chap('第二章','反复录音','录音室是一个奇怪的地方，它让人没有防备。'), next:'id_tra_2b'},
+    { id:'id_tra_2b', type:'seq', items:[
+      scene('你们开始固定合作，每周一两次，有时候是深夜，有时候是周末下午。录音室成了你们两个人的空间。'),
+      scene('你发现了一件事：他在镜头前是一个人，在录音室里又是另一个人。'),
+      npc(`（某次等伴奏加载时）……你觉得，一个人的声音会变吗。`,6,5,0),
+      you_(`会。随着年龄，随着经历。`),
+      npc(`……我有时候听以前的录音，觉得那个人不是我。`,5,6,0),
+      you_(`现在的你，更好。`),
+      npc(`（停顿，没想到你会这么说）……为什么？`,7,7,0),
+      you_(`因为你现在说话的方式，比唱歌更诚实。`),
+    ], choices:[
+      choice('（他没有回答，只是看了你很久）', 'sweet', {aff:11,trust:9,risk:0}, 'id_tra_2c'),
+    ]},
+
+    { id:'id_tra_2c', type:'seq', items:[
+      sms('录音结束后凌晨 01:40',[
+        {right:false,text:`今天的vocal很好，你能感觉到吗？`},
+        {right:true, text:`……有一点点。`},
+        {right:false,text:`那就对了，感觉到了就是真的好。`},
+        {right:true, text:`（停很久）……你总是这样说话。`},
+        {right:false,text:`哪样？`},
+        {right:true, text:`让人觉得……被相信了。`},
+        {right:false,text:`（不知道说什么）`},
+        {right:true, text:`……晚安。早点睡。`},
+        {right:false,text:`你也是。`},
+        {right:true, text:`嗯。（停）……谢谢你。`},
+      ]),
+    ], choices:[
+      choice('（那条"谢谢你"，不像是工作上的谢谢）', 'sweet', {aff:12,trust:10,risk:0}, 'id_tra_3a'),
+    ]},
+
+    // 音乐制作人 第三章
+    { id:'id_tra_3a', type:'chapter_gate', chap:chap('第三章','混音之外','有些频率，是用耳机感受不到的。'), next:'id_tra_3b'},
+    { id:'id_tra_3b', type:'seq', items:[
+      scene('Kevin来了一次录音室，说是来旁听，顺带蹭吃蹭喝。他见到你，立刻打开了话匣子。'),
+      npc(`（Kevin）哇我早就想见你了！${ID}说你做的东西很不一样！`,3,2,0),
+      scene(`${ID}瞪了Kevin一眼，Kevin毫不在意。`),
+      npc(`（Kevin）你们两个在这个小录音室关多久了啊，感情一定很好吧！`,3,2,3),
+      npc(`（${ID}）……你来是有事吗。`,4,3,0),
+      npc(`（Kevin）来看你们啊。（小声对你）他最近状态很好，你看不出来吗？`,4,4,2),
+    ], choices:[
+      choice('（对${ID}说：你状态确实好了很多。）', 'sweet', {aff:10,trust:7,risk:0}, 'id_tra_3c_warm'),
+      choice('（低头继续调设备，假装没听到Kevin说的）', 'trust', {aff:5,trust:9,risk:0}, 'id_tra_3c_ok'),
+    ]},
+
+    { id:'id_tra_3c_warm', type:'seq', items:[
+      scene('他愣了一下，然后耳根有点红，把椅子转过去朝着另一边。'),
+      npc(`（小声）……别听Kevin瞎说。`,6,5,0),
+      npc(`（Kevin，假装耳背）哦我没在说话！`,2,2,2),
+      scene('Kevin走后，你们继续工作。但今天说话比平时多，录音室里的空气有什么不一样。'),
+      sms('当晚 02:03',[
+        {right:false,text:`Kevin今天说了很多有的没的。`},
+        {right:true, text:`……他说什么了，我没仔细听。`},
+        {right:false,text:`说你状态变好了。`},
+        {right:true, text:`……他乱说。`},
+        {right:false,text:`我觉得没有乱说。`},
+        {right:true, text:`（很久的沉默）……因为在你这里录音，不用装。`},
+        {right:false,text:`（心跳加速）`},
+        {right:true, text:`……晚安。`},
+      ]),
+    ], choices:[
+      choice('（这条消息，你第二天早上又看了一遍）', 'sweet', {aff:14,trust:10,risk:0}, 'ch4_start'),
+    ]},
+
+    { id:'id_tra_3c_ok', type:'seq', items:[
+      scene('Kevin临走前，偷偷给你发了一条消息：「他跟我说过你，说你做音乐不像在干活，像在说话。你知道他很少这样评价别人的。」'),
+      sms('Kevin走后 23:50',[
+        {right:false,text:`你今天不想让Kevin在旁边，是不是？`},
+        {right:true, text:`……他太吵了。`},
+        {right:false,text:`哈，他给我发消息了，说了一些你说过我的事。`},
+        {right:true, text:`……他发了什么。（语气有点急）`},
+        {right:false,text:`说你觉得我做音乐不像在干活。`},
+        {right:true, text:`（沉默）……那只是……字面意思。`},
+        {right:false,text:`我知道。谢谢你这么想。`},
+        {right:true, text:`……（很久）不客气。晚安。`},
+      ]),
+    ], choices:[
+      choice('（有些话不需要说出来，心里就已经很暖了）', 'sweet', {aff:12,trust:10,risk:0}, 'ch4_start'),
+    ]}
+  );
+
+  // ══════════════════════════════════════
+  // ✂️ 身份E：助理造型师
+  // ══════════════════════════════════════
+  add(
+    { id:'id_sty_1a', type:'seq', items:[
+      scene('你拿着衣架和便利贴，站在你人生第一个大型艺人棚拍现场的门口，深呼吸了三次，推开了门。'),
+      scene('里面乱而有序，所有人都在忙。主造型师看到你，指了一个方向，说"先把那边的衣服分类挂好"，然后就走了。'),
+      scene('你认真地干活，专注到差点没注意到旁边有人站着。'),
+      npc(`……那件黑色的，能帮我拿一下吗。`,3,2,0),
+      scene('你抬头，差点把衣架掉了。'),
+    ], choices:[
+      choice('（镇定）这件吗？（递过去，若无其事）', 'trust', {aff:5,trust:9,risk:0}, 'id_sty_1b_calm'),
+      choice('（手没抖，但声音有点小）……好的，稍等。', 'sweet', {aff:7,trust:7,risk:0}, 'id_sty_1b_calm'),
+      choice('（小声）你是……${ID}吧……', 'bold', {aff:3,trust:2,risk:6}, 'id_sty_1b_oops'),
+    ]},
+
+    { id:'id_sty_1b_calm', type:'seq', items:[
+      scene('他接过衣服，看了你一眼，说了声谢谢，就走了。'),
+      scene('你继续干活，努力假装这是一件很普通的事。'),
+      scene('半个小时后，主造型师叫你过去，说他对今天第三套衣服不满意，让你去问问他有没有意见。'),
+      scene('你深吸一口气，走过去。'),
+      npc(`（抬头）……又是你。`,4,3,0),
+      you_(`（专业地）主造型师问您对第三套有没有意见。`),
+      npc(`（看着你，忽然笑了一下）……你挺稳的。`,6,6,0),
+    ], choices:[
+      choice('（说）新人嘛，稳是应该的。', 'trust', {aff:6,trust:8,risk:0}, 'id_sty_1c'),
+      choice('（说）只是工作而已。（内心：谁说稳来着）', 'sweet', {aff:8,trust:7,risk:0}, 'id_sty_1c'),
+    ]},
+
+    { id:'id_sty_1b_oops', type:'seq', items:[
+      scene('他看了你一眼，表情没有变，只是说：'),
+      npc(`……衣服。`,0,0,3),
+      scene('你把衣服递过去，他接了，转身走了。你站在原地，想找个地缝钻进去。'),
+      scene('一小时后，他走到你旁边，很轻声地说：'),
+      npc(`……谢谢你今天没有大惊小怪，就是晚了一步。`,4,5,0),
+      you_(`（说）……抱歉，以后注意。`),
+      npc(`（点头）新人吗。（语气不是质问，像是确认）`,3,4,0),
+    ], choices:[
+      choice('嗯，第一次。', 'trust', {aff:5,trust:7,risk:-2}, 'id_sty_1c'),
+    ]},
+
+    { id:'id_sty_1c', type:'seq', items:[
+      scene('第一天结束的时候，你坐在化妆间外面的走廊上，脱掉鞋子，默默揉脚。'),
+      scene('他路过，停了一下。'),
+      npc(`……第一天不好过吧。`,4,4,0),
+      you_(`还行。（强撑着）`),
+      npc(`（轻声笑）你脸上写着"好难"。`,5,5,0),
+      you_(`……我练习过表情管理的。`),
+      npc(`（更好笑了）……练习？（看了你一眼，从包里摸出一个创可贴放在你旁边）脚起泡了吧。`,8,7,0),
+    ], choices:[
+      choice('（愣了一下，小声说）谢谢。', 'sweet', {aff:10,trust:8,risk:0}, 'id_sty_2a'),
+      choice('（接过来，抬头看他）你怎么知道？', 'sweet', {aff:9,trust:7,risk:0}, 'id_sty_2a'),
+    ]},
+
+    // 造型师 第二章
+    { id:'id_sty_2a', type:'chapter_gate', chap:chap('第二章','衣架之间','他的世界你不懂，你的工作他都看在眼里。'), next:'id_sty_2b'},
+    { id:'id_sty_2b', type:'seq', items:[
+      scene('工作继续，你越来越熟悉这个环境，也越来越熟悉他的习惯——他不喜欢太紧的领口，换衣服的时候习惯从左边穿，中午只吃半碗饭。'),
+      scene('你不知道自己为什么会注意这些，只是注意到了。'),
+      npc(`（某天）今天这套……你挑的吗。`,6,5,0),
+      you_(`主造型师定的，我只是做搭配细节。`),
+      npc(`（看着你）……那领口是你改的？`,6,6,0),
+      you_(`（顿了一下）……你怎么知道？`),
+      npc(`因为今天比平时好穿。（平静地）谢谢你。`,9,8,0),
+    ], choices:[
+      choice('（你没想到他会注意到）', 'sweet', {aff:11,trust:9,risk:0}, 'id_sty_2c'),
+      choice('（低头）只是工作细节，不用谢。', 'trust', {aff:7,trust:9,risk:0}, 'id_sty_2c'),
+    ]},
+
+    { id:'id_sty_2c', type:'seq', items:[
+      sms('当晚 22:48',[
+        {right:false,text:`今天谢谢你记住我说过领口的事。`},
+        {right:true, text:`……你怎么有我的号码。`},
+        {right:false,text:`工作名单上有，联系事宜用的。`},
+        {right:true, text:`……嗯，合理。（停很久）那我说——你今天观察得很仔细。`},
+        {right:false,text:`工作需要嘛。`},
+        {right:true, text:`……只是工作？`},
+        {right:false,text:`（不知道该怎么回）`},
+        {right:true, text:`晚安。`},
+        {right:false,text:`……晚安。`},
+      ]),
+    ], choices:[
+      choice('（那个"只是工作？"反问了你很久）', 'sweet', {aff:12,trust:9,risk:0}, 'id_sty_3a'),
+    ]},
+
+    // 造型师 第三章
+    { id:'id_sty_3a', type:'chapter_gate', chap:chap('第三章','试穿那件事','有时候工作中的一秒钟，会变成很久很久之后还记得的事。'), next:'id_sty_3b'},
+    { id:'id_sty_3b', type:'seq', items:[
+      scene('Kevin来串场，借口说要来给${ID}加油，实际上是来捣乱的。他第一眼看到你，就开始和你聊天。'),
+      npc(`（Kevin）你就是那个改了领口的造型师吗！${ID}回去说了好多次，说总算有人懂了。`,4,3,3),
+      scene(`${ID}从镜子里瞪向Kevin。`),
+      npc(`（${ID}）……你来干嘛的。`,4,3,0),
+      npc(`（Kevin，完全不在意）来看你们啊！感情怎么样了——`,3,2,3),
+      npc(`（${ID}）Kevin。`,3,3,0),
+      npc(`（Kevin，小声对你）他很在乎你帮他弄的东西的，你不知道吗？`,5,4,2),
+    ], choices:[
+      choice('（对${ID}说：那你以后有需求直接跟我说。）', 'sweet', {aff:10,trust:7,risk:0}, 'id_sty_3c_ok'),
+      choice('（假装没听到Kevin说的，转移话题）', 'trust', {aff:5,trust:9,risk:0}, 'id_sty_3c_shy'),
+    ]},
+
+    { id:'id_sty_3c_ok', type:'seq', items:[
+      scene('他从镜子里看了你一眼，耳根有点红，说：'),
+      npc(`……嗯，知道了。`,6,5,0),
+      npc(`（Kevin，捂嘴笑）哦哦哦——`,2,2,3),
+      npc(`（${ID}）你出去。`,4,3,0),
+      sms('当晚 23:11',[
+        {right:false,text:`Kevin今天说了什么，你不用解释。`},
+        {right:true, text:`……那我能问你一件事吗。`},
+        {right:false,text:`说。`},
+        {right:true, text:`你帮我改领口，是因为工作，还是因为你记住了我说的？`},
+        {right:false,text:`（停了很久）……两个都有。`},
+        {right:true, text:`（更长的沉默）……谢谢你。（这句话，和之前的语气不太一样）`},
+      ]),
+    ], choices:[
+      choice('（你知道他问的不是领口的事）', 'sweet', {aff:14,trust:10,risk:0}, 'ch4_start'),
+    ]},
+
+    { id:'id_sty_3c_shy', type:'seq', items:[
+      scene('Kevin最后被${ID}推着出去了，但临走前回头冲你比了个心。'),
+      scene('你低头继续整理衣服，背对着他，耳朵很烫。'),
+      scene('下班前，他走到你旁边，把一瓶水放在你的工具箱上，什么都没说，就走了。'),
+      sms('当晚 23:30',[
+        {right:false,text:`今天谢谢那瓶水。`},
+        {right:true, text:`……你发现了。`},
+        {right:false,text:`我又不瞎。`},
+        {right:true, text:`（停很久）……Kevin乱说话，不要在意。`},
+        {right:false,text:`他说的是真的吗？`},
+        {right:true, text:`……（很长的沉默）晚安。`},
+        {right:false,text:`……逃避问题啊。晚安。`},
+        {right:true, text:`（更久之后）……嗯。（只有这一个字）`},
+      ]),
+    ], choices:[
+      choice('（这个"嗯"，算是默认了吗？）', 'sweet', {aff:13,trust:9,risk:0}, 'ch4_start'),
+    ]}
+  );
+
+  // ── CHAPTER 4: 接近 ──
+  add(
+    { id:'ch4_start', type:'chapter_gate', chap:chap('第四章','接近','距离缩短的方式有很多种。有时候是语言，有时候是沉默。'), next:'ch4_a'},
+    { id:'ch4_a', type:'seq', items:[
+      scene('他开始在关门前来。不是偶然——你后来意识到，他掐着点。'),
+      scene('有一次，你正在擦最后一张桌子，他站在门口。'),
+      npc(`还可以进吗。`,5,4,0),
+      you_(`再过十分钟就关了。`),
+      npc(`够了。`,4,3,0),
+      scene('你给他泡了一杯热可可，没有问他为什么要这个——他只是看了菜单角落的图片看了很久。'),
+      scene('他喝了一口，停了很长时间。'),
+      npc(`……我妈妈以前喜欢做这个。（声音很低）韩国买不到那个牌子了。`,6,8,0),
+      scene('你不知道该说什么。你什么都没说。但你把配方记在了小本子上。'),
+    ], choices:[
+      choice('（什么都没说，只是陪着他坐了一会儿）', 'trust', {aff:8,trust:12,risk:0}, 'ch4_b'),
+      choice('（轻声说：那就常来喝）', 'sweet', {aff:11,trust:8,risk:0}, 'ch4_b'),
+    ]},
+
+    { id:'ch4_b', type:'seq', items:[
+      scene('关门以后，他站在街上，没有急着走。'),
+      npc(`……你有时间吗。今晚。`,8,5,0),
+      you_(`（心里跳了一下）什么事？`),
+      npc(`我知道附近有一家拉面馆，还没关。我请你吃。（停顿，表情有点别扭）……就当谢谢你今天。`,9,6,0),
+    ], choices:[
+      choice('好啊。', 'sweet', {aff:10,trust:6,risk:0}, 'ch4_c_yes'),
+      choice('不用了，你不必特意谢我。', 'trust', {aff:5,trust:8,risk:0}, 'ch4_c_no'),
+    ]},
+
+    { id:'ch4_c_yes', type:'seq', items:[
+      scene('那家拉面馆只有四张桌子，老板娘认识他，见了他也只是打了个招呼，没有大惊小怪。你喜欢这里。'),
+      npc(`你一直在首尔吗？`,6,5,0),
+      you_(`来了三年了。`),
+      npc(`喜欢这里吗？`,4,5,0),
+      you_(`还行，习惯了就好。`),
+      npc(`（看着你）……我以为你会说喜欢。`,6,6,0),
+      you_(`为什么？`),
+      npc(`你看起来很……在这里的人。很稳的那种。`,7,7,0),
+      scene('你想了想，不知道该把这句话理解成夸奖还是别的什么。但他说话的时候，一直在看你。'),
+    ], choices:[
+      choice('（问他喜欢首尔吗）', 'trust', {aff:7,trust:8,risk:0}, 'ch5_start'),
+      choice('（什么都没问，只是笑了笑）', 'sweet', {aff:10,trust:7,risk:0}, 'ch5_start'),
+    ]},
+
+    { id:'ch4_c_no', type:'seq', items:[
+      scene('他沉默了一下。'),
+      npc(`……不是谢谢。（停顿很长）只是，想和你多待一会儿。`,10,6,0),
+      scene('你的心跳漏了半拍。'),
+      you_(`……那好吧。`),
+      scene('你们在街边的便利店买了东西，在台阶上坐了很久，没有说很多话，但气氛奇妙地安静而舒服。'),
+    ], choices:[
+      choice('（这是你觉得时间过得最快的一晚）', 'sweet', {aff:12,trust:8,risk:0}, 'ch5_start'),
+    ]}
+  );
+
+  // ── CHAPTER 5: 群聊与舆论 ──
+  add(
+    { id:'ch5_start', type:'chapter_gate', chap:chap('第五章','暗流','有些事情，你们还没开口说，外面已经开始有风声了。'), next:'ch5_a'},
+    { id:'ch5_a', type:'seq', items:[
+      ev('📱 群聊事件','THE BOYZ 队内群聊','你偶然看到他手机上弹出的群消息——他接了一个电话走开，手机放在了你这里。'),
+      grp('THE BOYZ 队内 🐦', [
+        {name:'Kevin', text:`상연哥今天去哪里啦，不见人影👀`},
+        {name:'Eric', text:`哦哦是不是那个咖啡店🤔`},
+        {name:'Sunwoo', text:`又去啊，${ID}哥你是真的喜欢那里的咖啡还是喜欢那里的人啊LMAO`},
+        {name:'${ID}', text:`看什么看`},
+        {name:'Juyeon', text:`😂😂😂`},
+        {name:'${ID}', text:`……都回去排练`},
+      ]),
+      scene('他回来的时候，你假装什么都没看。但你的耳朵烫了很久。'),
+    ], choices:[
+      choice('（装作什么都没看见）', 'trust', {aff:6,trust:10,risk:0}, 'ch5_b'),
+      choice('（笑着说：你朋友挺有趣的）', 'bold', {aff:9,trust:6,risk:5}, 'ch5_b'),
+    ]},
+
+    { id:'ch5_b', type:'seq', items:[
+      scene('一周后，一个粉丝拍到了他进出你咖啡馆的照片。没有拍到你们两个在一起，只是他进出的背影。'),
+      ev('⚡ 粉丝舆论','「他最近常去梨泰院一家小店？」','饭圈开始有人讨论。大多数是好奇，也有人开始找地址。你的店忽然多了几个陌生脸孔的顾客，眼神飘忽。'),
+      scene('他发了消息来。'),
+      sms('当晚 21:33',[
+        {right:false,text:`你那边有人去找吗。`},
+        {right:true, text:`来了几个陌生人，但没什么事。`},
+        {right:false,text:`……对不起。是我不小心。`},
+        {right:true, text:`不是你的错。`},
+        {right:false,text:`如果给你带来麻烦的话，我可以暂时不去了。`},
+        {right:true, text:`（很久没回）`},
+        {right:false,text:`（很久之后）……你不来才奇怪。`},
+        {right:true, text:`（更久之后）……好。`},
+      ]),
+    ], choices:[
+      choice('（心里有些感动，但也有点怕）', 'sweet', {aff:8,trust:9,risk:5}, 'ch6_start'),
+      choice('（决定提前做好心理准备）', 'trust', {aff:5,trust:11,risk:3}, 'ch6_start'),
+    ]}
+  );
+
+  // ── CHAPTER 6: 冷战 ──
+  add(
+    { id:'ch6_start', type:'chapter_gate', chap:chap('第六章','第一次冷战','每段关系里都会有那么几天，你们说的话少于平时，但心里想的比任何时候都多。'), next:'ch6_a'},
+    { id:'ch6_a', type:'seq', items:[
+      scene('公司联系了你。一个措辞很礼貌但态度很清晰的电话。'),
+      ev('🏢 公司介入','经纪公司来电',`公司公关部门表示，有粉丝已经开始关注"${ID}经常出入的某家梨泰院店铺"，为了规避舆论风险，希望他近期减少去该店的频率，也希望店主配合不要公开相关内容。`),
+      scene('你接完电话，静静地站在柜台后面，不知道该有什么感受。'),
+      scene('他第二天还是来了。你们都知道那通电话，都没有提。'),
+      npc(`（坐下来，手放在桌上，说）……我知道他们联系你了。`,5,4,0),
+      you_(`嗯。`),
+      npc(`……你有什么想说的吗。`,4,5,0),
+    ], choices:[
+      choice('（说）没有。你不必为难。', 'trust', {aff:3,trust:10,risk:-2}, 'ch6_b_calm'),
+      choice('（说）那你呢，你怎么想的？', 'bold', {aff:6,trust:7,risk:3}, 'ch6_b_confront'),
+    ]},
+
+    { id:'ch6_b_calm', type:'seq', items:[
+      npc(`（停顿）……你不生气吗。`,5,6,0),
+      you_(`生气有什么用。`),
+      npc(`（盯着你很久）……我不想因为我给你惹麻烦。`,7,5,0),
+      you_(`那是我的问题，不是你的。`),
+      scene('他看着你的侧脸，像是想说什么，又什么都没说。走的时候，他把一张折叠的纸压在了杯底下。'),
+      scene('你展开来，上面只有三个字：「对不起。」'),
+      scene('下面还有一行：「但我还是想来。」'),
+    ], choices:[
+      choice('（把那张纸压在日记本里）', 'sweet', {aff:12,trust:8,risk:0}, 'ch6_c'),
+    ]},
+
+    { id:'ch6_b_confront', type:'seq', items:[
+      npc(`……我，（停顿）我不知道。`,4,4,0),
+      you_(`你不知道？`),
+      npc(`我知道我不该继续来。但我……（没有说完）`,6,5,0),
+      scene('沉默了很长时间。外面有人路过，脚步声在门口顿了一下，又走了。'),
+      npc(`……如果你让我不要再来，我就不来了。`,5,6,0),
+      you_(`我没有让你不来。`),
+      npc(`（抬起头，第一次这么直接地看着你的眼睛）那我来。`,10,7,0),
+    ], choices:[
+      choice('（沉默，算是默许）', 'sweet', {aff:12,trust:9,risk:2}, 'ch6_c'),
+    ]},
+
+    { id:'ch6_c', type:'seq', items:[
+      scene('那之后，他来的时候更小心了——帽子换成了口罩，时间选在人少的工作日下午。'),
+      scene('但你们说话的时间，反而变多了。'),
+      phone_('来电 · 20分钟', [
+        {name:`${ID}`, text:`（声音有点沙）……你睡了吗。`},
+        {name:'你', text:`没有，怎么了。`},
+        {name:`${ID}`, text:`今天排练出了些问题。我只是……想打给你。`},
+        {name:'你', text:`（安静地听）嗯。`},
+        {name:`${ID}`, text:`你会觉得烦吗，我突然打来。`},
+        {name:'你', text:`不会。`},
+        {name:`${ID}`, text:`（呼出一口气）……谢谢你。`},
+        {name:'你', text:`……没什么。`},
+        {name:`${ID}`, text:`你的声音……（停顿）挺好听的。晚安。`},
+      ]),
+    ], choices:[
+      choice('（挂完电话睡不着，躺到天亮）', 'sweet', {aff:10,trust:10,risk:0}, 'ch7_start'),
+    ]}
+  );
+
+  // ── CHAPTER 7: 误会 ──
+  add(
+    { id:'ch7_start', type:'chapter_gate', chap:chap('第七章','误会','有时候什么都没发生，却比什么都发生了更让人难受。'), next:'ch7_a'},
+    { id:'ch7_a', type:'seq', items:[
+      scene('他有一段时间没有来，也很少回消息。你知道他在忙——新专辑宣传期，每天的行程排得满满的。'),
+      scene('你告诉自己这是正常的。'),
+      ev('📸 娱乐新闻','某明星花边消息',`有媒体拍到${ID}与一位女艺人同乘经纪车，两人表情亲密。照片迅速扩散，粉丝圈开始议论纷纷。`),
+      scene('你在刷新闻的时候看到了这个。停了很长时间。'),
+      scene('你对自己说：你们算什么？你们什么都不是。所以你凭什么难受。'),
+      scene('但手机还是静静地放着，你没有发消息给他。'),
+    ], choices:[
+      choice('（把手机扣过去，继续做事）', 'trust', {aff:-3,trust:5,risk:0}, 'ch7_b_wait'),
+      choice('（发消息问他最近好吗）', 'sweet', {aff:5,trust:3,risk:2}, 'ch7_b_ask'),
+    ]},
+
+    { id:'ch7_b_wait', type:'seq', items:[
+      scene('两天后，他出现在你店门口。你正在整理货架，背对着门，没注意到他进来。'),
+      npc(`……你最近不发消息了。`,5,4,0),
+      you_(`（没回头）你很忙。`),
+      npc(`……你看到那个新闻了。`,4,5,0),
+      scene('不是问句。'),
+      you_(`（沉默）`),
+      npc(`（走近了一步）那是宣传活动，是公司安排的场合。我们认识不超过三次。`,6,6,0),
+      you_(`你不用解释。`),
+      npc(`（停顿）我想解释。（声音低了下来）……因为你对我来说不一样。`,10,8,0),
+    ], choices:[
+      choice('（终于回头，眼睛有点红）', 'sweet', {aff:12,trust:10,risk:0}, 'ch7_c'),
+      choice('（忍住了，说：我知道了）', 'trust', {aff:8,trust:9,risk:0}, 'ch7_c'),
+    ]},
+
+    { id:'ch7_b_ask', type:'seq', items:[
+      sms('发送后 3小时', [
+        {right:false, text:`最近怎么样，还忙吗。`},
+        {right:true,  text:`（三小时后）忙。你有事吗。`},
+        {right:false, text:`没事，就是问问。`},
+        {right:true,  text:`嗯。`},
+        {right:false, text:`（看着那个"嗯"字，不知道该说什么）`},
+        {right:true,  text:`（第二天早上）昨天没睡好，语气有点差，对不起。`},
+        {right:false, text:`没关系。`},
+        {right:true,  text:`你看到那个新闻了吗。`},
+        {right:false, text:`……看到了。`},
+        {right:true,  text:`是公司安排的。她人很好，但我们不是那种关系。`},
+        {right:false, text:`我知道。（停顿）谢谢你说这个。`},
+        {right:true,  text:`……不用谢。（过了很久）我想你了。`},
+        {right:false, text:`（手机差点掉了）`},
+      ]),
+    ], choices:[
+      choice('（回复：……我也是）', 'sweet', {aff:14,trust:10,risk:0}, 'ch7_c'),
+      choice('（盯着屏幕，什么都没回）', 'trust', {aff:9,trust:8,risk:0}, 'ch7_c'),
+    ]},
+
+    { id:'ch7_c', type:'seq', items:[
+      scene('和好之后的那个下午，他在你的咖啡馆里坐到天黑。'),
+      scene('你们说了很多，也有很长时间什么都没说，只是坐在同一个空间里，听着外面的街声。'),
+      npc(`我不知道这算什么。（他忽然说）我们之间。`,8,7,0),
+      you_(`（没有马上回答）`),
+      npc(`我只是……觉得你是我在这里唯一不用表演的地方。`,10,10,0),
+      scene('你听了很久，才说：'),
+      you_(`那就先这样吧。`),
+      npc(`（点了点头，很轻地）……好。`,9,8,0),
+    ], choices:[
+      choice('（这一刻，感觉像是某种默契的开始）', 'sweet', {aff:10,trust:10,risk:0}, 'ch8_start'),
+    ]}
+  );
+
+  // ── CHAPTER 8: 行程冲突 ──
+  add(
+    { id:'ch8_start', type:'chapter_gate', chap:chap('第八章','行程','他的时间不是他自己的。你知道这件事，但有时候还是会忘记。'), next:'ch8_a'},
+    { id:'ch8_a', type:'seq', items:[
+      scene('你们约好了周日一起去海边——不是约会，是他提的，说想换个地方换换脑子。你们计划了三个星期。'),
+      scene('周六晚上，他打来电话。'),
+      npc(`（声音很疲）……我明天行程有变，公司临时加了一个录制。`,3,2,0),
+      you_(`什么时候告诉你的？`),
+      npc(`今晚。`,2,2,0),
+      scene('你听到他按着电话，可能在深呼吸。'),
+      npc(`对不起。真的。`,4,5,0),
+    ], choices:[
+      choice('（说）没关系，下次再约。（但声音有点平）', 'trust', {aff:2,trust:8,risk:0}, 'ch8_b_calm'),
+      choice('（说）你不用道歉，这不是你的错。', 'trust', {aff:5,trust:10,risk:0}, 'ch8_b_warm'),
+      choice('（沉默了很长时间，说）我知道了。', 'sweet', {aff:-2,trust:5,risk:0}, 'ch8_b_cold'),
+    ]},
+
+    { id:'ch8_b_warm', type:'seq', items:[
+      npc(`（沉默了一下）……你真的不生气吗。`,5,5,0),
+      you_(`有一点点。但你也没办法。`),
+      npc(`（低笑）……你这样说，比你说没关系还好。`,7,7,0),
+      you_(`下次记得提前三天以上告诉我。`),
+      npc(`好。（停顿）……明天录完我去找你。`,8,6,0),
+      you_(`那我等你。`),
+      scene('他真的来了。带着还没退掉的疲倦，在关门前走进来，点了和第一天一样的美式，坐在了和第一天一样的角落。'),
+      scene('你端咖啡过去，他抬头，冲你笑了一下。'),
+      scene('你没忍住，也笑了。'),
+    ], choices:[
+      choice('（这一天，好像什么都值得了）', 'sweet', {aff:12,trust:10,risk:0}, 'ch9_start'),
+    ]},
+
+    { id:'ch8_b_calm', type:'seq', items:[
+      scene('你挂了电话，坐了很久。'),
+      scene('第二天你一个人去了海边。坐在石头上，吹了很久的风。拍了一张照发给他，没有说什么。'),
+      scene('他回了一张他录制现场的截图，只写了三个字：「下次一起。」'),
+      sms('当天晚上',[
+        {right:false,text:`今天的海很好看。`},
+        {right:true, text:`我看到了。对不起没能陪你去。`},
+        {right:false,text:`没什么，一个人也挺好的。`},
+        {right:true, text:`（过了很久）你一个人的时候，我更想陪着你。`},
+        {right:false,text:`……什么鬼话。`},
+        {right:true, text:`是真的。`},
+      ]),
+    ], choices:[
+      choice('（把这条消息截图，存起来）', 'sweet', {aff:10,trust:9,risk:0}, 'ch9_start'),
+    ]},
+
+    { id:'ch8_b_cold', type:'seq', items:[
+      scene('他打来了第二个电话，你没有接。'),
+      scene('第二天他发了很长一条消息，解释了录制的事，最后写道：「我知道你失望了，我也是。我不想让你觉得你在我这里排不上位。你不是。」'),
+      scene('你看了很久，才回了一个字：「嗯。」'),
+      scene('沉默持续了三天。'),
+      phone_('第四天 · 深夜来电',[
+        {name:`${ID}`,text:`……我能问你一个问题吗。`},
+        {name:'你',text:`说吧。`},
+        {name:`${ID}`,text:`你是不是在想，我们这样下去有什么意义。`},
+        {name:'你',text:`……有想过。`},
+        {name:`${ID}`,text:`我也想过。（停顿）但我每次想完，都还是想给你打电话。`},
+        {name:'你',text:`……（沉默）`},
+        {name:`${ID}`,text:`我没办法给你承诺，你知道。但我也不想就这样停在这里。`},
+        {name:'你',text:`……那我们怎么办。`},
+        {name:`${ID}`,text:`继续。如果你愿意。`},
+      ]),
+      scene('你盯着天花板，想了很久。'),
+    ], choices:[
+      choice('（说）……好。继续。', 'sweet', {aff:10,trust:8,risk:0}, 'ch9_start'),
+      choice('（说）让我再想想。但感谢你打来。', 'trust', {aff:6,trust:10,risk:0}, 'ch9_start'),
+    ]}
+  );
+
+  // ── CHAPTER 9: 隐藏剧情与危机 ──
+  add(
+    { id:'ch9_start', type:'chapter_gate', chap:chap('第九章','临界','有些事情，你可以一直假装不去想，直到它出现在你面前。'), next:'ch9_a'},
+    { id:'ch9_a', type:'seq', items:[
+      scene('他的粉丝找到了你的店的地址，有人开始在门口守着。不是恶意，只是好奇心，但你感觉得到被注视的不适。'),
+      ev('🔥 粉丝舆论升级','「他的关系户？」','网络上开始有人讨论。有人说你们只是普通的店客关系，也有人开始扒你的信息。你的社交账号莫名其妙涨粉了，评论区参差不齐。'),
+      scene('他知道这件事，打来了电话。'),
+      phone_('深夜电话',[
+        {name:`${ID}`,text:`……我看到了。你现在怎么样。`},
+        {name:'你',text:`还好，只是有点乱。`},
+        {name:`${ID}`,text:`对不起，这是我带来的。`},
+        {name:'你',text:`你又在道歉了。`},
+        {name:`${ID}`,text:`因为这次是真的我的问题。（停顿）公司让我谈一下，该怎么处理这件事。`},
+        {name:'你',text:`……然后呢。`},
+        {name:`${ID}`,text:`然后我问他们：如果我不处理，会怎样。`},
+        {name:'你',text:`……（心跳）你怎么跟他们说的。`},
+        {name:`${ID}`,text:`我说我需要想一想。（声音沉了下来）……我想和你谈完，再决定。`},
+      ]),
+    ], choices:[
+      choice('（说）你不用为我做什么特别的决定。', 'trust', {aff:6,trust:12,risk:0}, 'ch9_b_give'),
+      choice('（说）你打算怎么做？', 'bold', {aff:8,trust:8,risk:3}, 'ch9_b_ask'),
+    ]},
+
+    { id:'ch9_b_give', type:'seq', items:[
+      npc(`……你让我自己想？`,6,8,0),
+      you_(`这是你的事业，我没有立场给你压力。`),
+      npc(`（停了很久）……你知道吗，你这样说，让我更不想放弃。`,10,8,0),
+      you_(`那是你自己的感受，不关我的事。`),
+      npc(`（低低地笑了）……你明明在乎，装什么冷静。`,9,7,0),
+      scene('你没有说话，只是盯着窗外的路灯，耳朵烫了很久。'),
+    ], choices:[
+      choice('（这次没有装冷静，说）……有一点。', 'sweet', {aff:14,trust:10,risk:0}, 'ch9_c'),
+    ]},
+
+    { id:'ch9_b_ask', type:'seq', items:[
+      npc(`（沉默）我想……公开澄清，说你是我的朋友，消除误会。`,5,5,0),
+      you_(`那样风险更高。`),
+      npc(`我知道。但我不想让你一个人扛这些。`,8,8,0),
+      you_(`（不知道该说什么）`),
+      npc(`你有什么想法吗。（声音里有一点点颤）`,7,7,0),
+      you_(`……先什么都不说，让它过去。有时候沉默比解释更有效。`),
+      npc(`（长时间沉默）……你很冷静。`,6,8,0),
+      you_(`其中一个人冷静就够了。`),
+      npc(`（轻笑，声音里有什么东西松开了）……好，听你的。`,9,7,0),
+    ], choices:[
+      choice('（这一刻，你们像是真正的搭档了）', 'trust', {aff:10,trust:13,risk:-3}, 'ch9_c'),
+    ]},
+
+    { id:'ch9_c', type:'seq', items:[
+      scene('风波过去了大约两周。舆论转移了，新的新闻出现了，你的店恢复了平静。'),
+      scene('他来的那天，没有戴帽子，没有戴口罩，就这样走进来，在熟悉的位置坐下。'),
+      npc(`（看着你，什么都没说，只是点了一杯咖啡）`,5,5,0),
+      scene('你给他做了那杯咖啡。放下的时候，他的手指碰到了你的。'),
+      scene('两个人都没有动。'),
+      scene('窗外的阳光把他的侧脸勾得很好看。'),
+    ], choices:[
+      choice('（把手缩回来，低下头，继续工作）', 'trust', {aff:8,trust:9,risk:0}, 'ch10_start'),
+      choice('（没有缩手，停在那里一秒，然后离开）', 'sweet', {aff:13,trust:9,risk:0}, 'ch10_start'),
+    ]}
+  );
+
+  // ── CHAPTER 10: 最终决定 ──
+  add(
+    { id:'ch10_start', type:'chapter_gate', chap:chap('第十章','说出口','有些话，不是因为准备好了才说，是因为不说就来不及了。'), next:'ch10_a'},
+    { id:'ch10_a', type:'seq', items:[
+      scene('他告诉你，下个月要去海外巡演，将近三个月。'),
+      npc(`……我在想要不要告诉你，因为不知道你会不会觉得，现在说有什么意义。`,8,7,0),
+      you_(`（心里收紧了）你什么意思。`),
+      npc(`就是……（停了很长时间）如果我说，我不想就这样出发……你能理解吗。`,10,8,0),
+    ], choices:[
+      choice('（说）你想说什么，直接说。', 'bold', {aff:8,trust:7,risk:0}, 'ch10_b_confess'),
+      choice('（沉默，等他说完）', 'sweet', {aff:10,trust:8,risk:0}, 'ch10_b_confess'),
+    ]},
+
+    { id:'ch10_b_confess', type:'seq', items:[
+      npc(`……我喜欢你。（说完，看着你，没有逃开）我不知道这意味着什么，我没办法给你正常人的关系，我的时间不是我自己的，我的生活里有太多你不应该承担的东西——`,10,8,0),
+      you_(`……你有没有停下来想过，我要不要承担，是我的事。`),
+      npc(`（愣了一下）`,5,5,0),
+      you_(`你一直在替我想，我承不承受得了，我会不会后悔。但你有没有问过我自己怎么想？`),
+      scene('他沉默了很长时间。窗外有鸟叫，很远，几乎被街声淹没。'),
+      npc(`……那，你怎么想。`,7,8,0),
+    ], choices:[
+      choice('（说）我也喜欢你。但我需要时间。', 'trust', {aff:12,trust:12,risk:2}, 'ending_soft'),
+      choice('（说）我喜欢你。我早就喜欢了。', 'sweet', {aff:18,trust:12,risk:3}, 'ending_sweet'),
+      choice('（说）我……不确定。我怕这段关系承受不了现实。', 'bold', {aff:7,trust:10,risk:0}, 'ending_apart'),
+    ]}
+  );
+
+  // ── ENDINGS ──
+  add(
+    { id:'ending_sweet', type:'ending',
+      badge:'♡', title:'与你同在',
+      sub:'甜蜜结局',
+      desc:`你说出了那句话。\n他听完，低下头，过了很久，才说：谢谢你。\n\n不是"我也是"，不是任何浪漫的回应。只是谢谢你。\n\n后来你才明白，对他来说，有人愿意接受他的全部处境，\n这两个字，已经是他能给出的最重的东西。\n\n他走了三个月。每隔几天，会发一条消息。\n不长，有时候是一张异国街道的照片，有时候只是一个字。\n但你知道，他每次打开对话框，都是想着你。\n\n他回来的那天，直接来了你的店。\n推开门，脱下帽子，坐在老地方。\n你端了咖啡过去，他的手握住了你的，没有放开。\n\n「我回来了。」\n「我知道。」`,
+    },
+
+    { id:'ending_soft', type:'ending',
+      badge:'🌙', title:'慢慢来',
+      sub:'温柔结局',
+      desc:`你说，我需要时间。\n他说，好。\n\n那两个字，说得很轻，但很认真。\n\n他出发前，你们吃了一顿饭。没有说情话，没有催泪剧情。\n只是两个人坐在那家老拉面馆，把碗里的面吃完。\n\n他走了。你们还在发消息，比以前多，也比以前直接。\n他不再绕弯子，你也不再装冷静。\n\n三个月后，他回来了，站在你的门口，说：\n「想好了吗。」\n\n你说：「还差一点点。」\n他笑了：「没关系，我可以等。」\n\n这段关系没有正式的名字。\n但你们都知道，它在往某个地方走。`,
+    },
+
+    { id:'ending_apart', type:'ending',
+      badge:'✦', title:'就此告别',
+      sub:'遗憾结局',
+      desc:`你说出了那句话：我怕这段关系承受不了现实。\n\n他听完，点了点头，表情很平静——\n是那种努力维持平静的样子。\n\n「……我能理解。」他说。「这本来就很难。」\n\n你们又坐了一会儿，说了些别的，天气，最近的事。\n快走的时候，他站起来，在门口停了一下。\n\n「我很高兴认识你。」\n\n你说：我也是。\n\n他走了，没有回头。\n\n你站在关上的门前，站了很久。\n\n有时候，两个人都用力了，还是走不到一起。\n不是谁的错。\n只是，现实太重。`,
+    }
+  );
+
+  // Endings for bad paths
+  add(
+    { id:'ending_risk', type:'ending',
+      badge:'◈', title:'公司介入',
+      sub:'风险结局',
+      desc:`风险值太高，公司这次不再只是打电话了。\n\n经纪人找他谈了话，说得很直接：\n「这段关系会影响你的形象，影响整个组合。」\n\n他沉默了三天，没有发消息。\n第四天，你收到了一条陌生号码发来的短信：\n「${ID}让我告诉你，他需要一段时间整理一下。希望你理解。」\n\n你把手机放下，去做了一杯咖啡，坐在空荡荡的店里，喝完了它。\n\n后来，他再也没有来过。\n你把那张写着「但我还是想来」的纸条，压在抽屉最深处，没有扔掉。\n\n也许有一天，时机成熟的时候，他会回来。\n也许不会。`,
+    }
+  );
+
+  return story;
+}
+
+// ══════════════════════════════════════════════════════
+// GAME STATE
+// ══════════════════════════════════════════════════════
+let G = {
+  member: null,
+  identity: null,
+  story: null,
+  cur: null,
+  seqIdx: 0,
+  aff: 20, trust: 20, risk: 10,
+  chapter: 1,
+  pendingChoices: null,
+  saveMode: 'save'
+};
+
+function applyEffects(e) {
+  if (!e) return;
+  G.aff   = Math.max(0, Math.min(100, G.aff   + (e.aff||0)));
+  G.trust = Math.max(0, Math.min(100, G.trust + (e.trust||0)));
+  G.risk  = Math.max(0, Math.min(100, G.risk  + (e.risk||0)));
+  updateStatBars();
+}
+
+function updateStatBars() {
+  document.getElementById('fAff').style.width   = G.aff+'%';
+  document.getElementById('fTrust').style.width = G.trust+'%';
+  document.getElementById('fRisk').style.width  = G.risk+'%';
+  document.getElementById('nAff').textContent   = G.aff;
+  document.getElementById('nTrust').textContent = G.trust;
+  document.getElementById('nRisk').textContent  = G.risk;
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER HELPERS
+// ══════════════════════════════════════════════════════
+function chat() { return document.getElementById('gChat'); }
+
+function appendScene(text) {
+  const d = document.createElement('div');
+  d.className = 'scene-block';
+  d.textContent = text;
+  chat().appendChild(d);
+  scrollDown();
+}
+
+function appendMsg(who, text, isPlayer, aff=0, trust=0, risk=0) {
+  const row = document.createElement('div');
+  row.className = 'msg-row ' + (isPlayer ? 'player' : 'npc');
+
+  const color = G.member ? G.member.color : '#3b82f6';
+  const avi = document.createElement('div');
+  avi.className = 'msg-avi';
+  avi.style.background = isPlayer
+    ? 'linear-gradient(135deg,#065f46,#047857)'
+    : `linear-gradient(135deg,${color}88,${color})`;
+  avi.textContent = isPlayer ? '我' : (G.member ? G.member.name[0] : '?');
+
+  const body = document.createElement('div');
+  body.className = 'msg-body';
+
+  const sender = document.createElement('div');
+  sender.className = 'msg-sender';
+  sender.textContent = who;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'msg-bubble';
+  bubble.textContent = text;
+
+  let tags = '';
+  if (aff>0)  tags += `<span class="stat-tag up">▲ 好感</span>`;
+  if (aff<0)  tags += `<span class="stat-tag down">▼ 好感</span>`;
+  if (trust>0) tags += `<span class="stat-tag up">▲ 信任</span>`;
+  if (trust<0) tags += `<span class="stat-tag down">▼ 信任</span>`;
+  if (risk>0)  tags += `<span class="stat-tag down">▲ 风险</span>`;
+
+  body.appendChild(sender);
+  body.appendChild(bubble);
+  if (tags) {
+    const td = document.createElement('div');
+    td.className = 'stat-tags';
+    td.innerHTML = tags;
+    body.appendChild(td);
+  }
+
+  if (isPlayer) { row.appendChild(body); row.appendChild(avi); }
+  else          { row.appendChild(avi);  row.appendChild(body); }
+
+  chat().appendChild(row);
+  scrollDown();
+}
+
+function appendEvent(evType, title, body) {
+  const d = document.createElement('div');
+  d.className = 'event-card';
+  d.innerHTML = `<div class="ev-type">${evType}</div><div class="ev-title">${title}</div><div class="ev-body">${body}</div>`;
+  chat().appendChild(d);
+  scrollDown();
+}
+
+function appendGroup(title, msgs) {
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `<div class="group-header">💬 ${title}</div>`;
+  const body = document.createElement('div');
+  body.className = 'group-body';
+  msgs.forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'group-msg';
+    const mn = G.member ? G.member.name : '他';
+    const txt = m.text.replace(/\$\{ID\}/g, mn);
+    row.innerHTML = `<div class="group-msg-avi">${m.name[0]}</div><div class="group-msg-body"><div class="gm-name">${m.name}</div><div class="gm-text">${txt}</div></div>`;
+    body.appendChild(row);
+  });
+  wrapper.appendChild(body);
+  chat().appendChild(wrapper);
+  scrollDown();
+}
+
+function appendSms(time, messages) {
+  const d = document.createElement('div');
+  d.className = 'sms-card';
+  const mn = G.member ? G.member.name : '他';
+  let html = `<div class="sms-time">${time}</div>`;
+  messages.forEach(m => {
+    const txt = m.text.replace(/\$\{ID\}/g, mn);
+    html += `<div class="sms-row${m.right?' right':''}"><div class="sms-bubble">${txt}</div></div>`;
+  });
+  d.innerHTML = html;
+  chat().appendChild(d);
+  scrollDown();
+}
+
+function appendPhone(status, transcript) {
+  const mn = G.member ? G.member.name : '他';
+  const d = document.createElement('div');
+  d.className = 'phone-card';
+  let thtml = transcript.map(t => {
+    const n = t.name.replace(/\$\{ID\}/g, mn);
+    return `<b style="color:var(--blue3)">${n}：</b>${t.text}`;
+  }).join('<br>');
+  d.innerHTML = `<div class="phone-icon">📞</div><div class="phone-name">${mn}</div><div class="phone-status">${status}</div><div class="phone-transcript">${thtml}</div>`;
+  chat().appendChild(d);
+  scrollDown();
+}
+
+function scrollDown() {
+  const c = chat();
+  setTimeout(() => c.scrollTo({top:c.scrollHeight, behavior:'smooth'}), 60);
+}
+
+// ══════════════════════════════════════════════════════
+// STORY RUNNER
+// ══════════════════════════════════════════════════════
+function showChapterOverlay(num, title, sub, cb) {
+  const o = document.getElementById('chapterOverlay');
+  document.getElementById('coNum').textContent = num;
+  document.getElementById('coTitle').textContent = title;
+  document.getElementById('coSub').textContent = sub;
+  o.classList.add('show');
+  setTimeout(() => {
+    o.classList.remove('show');
+    o.classList.add('hide');
+    setTimeout(() => { o.classList.remove('hide'); if(cb)cb(); }, 500);
+  }, 2200);
+}
+
+function gotoNode(id) {
+  if (!id) return;
+  // Check risk-based forced ending
+  if (G.risk >= 85 && id !== 'ending_risk' && !id.startsWith('ending_')) {
+    setTimeout(() => gotoNode('ending_risk'), 400);
+    return;
+  }
+  const node = G.story.nodes[id];
+  if (!node) { console.warn('Missing node:', id); return; }
+  G.cur = node;
+  G.seqIdx = 0;
+  runNode(node);
+}
+
+function runNode(node) {
+  if (node.type === 'chapter_gate') {
+    const ch = node.chap;
+    G.chapter = parseInt(ch.num.replace(/[^0-9]/g,'')) || G.chapter;
+    document.getElementById('gChapter').textContent = ch.num + ' · ' + ch.title;
+    showChapterOverlay(ch.num, ch.title, ch.sub, () => gotoNode(node.next));
+    return;
+  }
+
+  if (node.type === 'seq') {
+    runSeq(node);
+    return;
+  }
+
+  if (node.type === 'ending') {
+    showEnding(node);
+    return;
+  }
+}
+
+function runSeq(node) {
+  if (G.seqIdx >= node.items.length) {
+    // Show choices
+    G.pendingChoices = node.choices;
+    renderChoices(node.choices);
+    return;
+  }
+  const item = node.items[G.seqIdx];
+  G.seqIdx++;
+
+  const mn = G.member ? G.member.name : '他';
+  const kr = G.member ? G.member.kr : '';
+
+  const replaceVars = t => t.replace(/\$\{ID\}/g, mn).replace(/\${ID}/g, mn);
+
+  if (item.type === 'scene') {
+    appendScene(replaceVars(item.text));
+  } else if (item.type === 'msg_npc') {
+    applyEffects({aff:item.aff,trust:item.trust,risk:item.risk});
+    appendMsg(`${mn} ${kr}`, replaceVars(item.text), false, item.aff, item.trust, item.risk);
+  } else if (item.type === 'msg_player') {
+    appendMsg('你', replaceVars(item.text), true);
+  } else if (item.type === 'event') {
+    appendEvent(item.evType, item.title, replaceVars(item.body));
+  } else if (item.type === 'group') {
+    appendGroup(replaceVars(item.title), item.msgs);
+  } else if (item.type === 'sms') {
+    appendSms(item.time, item.messages);
+  } else if (item.type === 'phone') {
+    appendPhone(item.status, item.transcript);
+  }
+
+  // Auto-advance after delay
+  const delay = (item.type === 'sms' || item.type === 'phone' || item.type === 'group') ? 700 : 380;
+  setTimeout(() => runSeq(node), delay);
+}
+
+function renderChoices(choices) {
+  const wrap = document.getElementById('choicesWrap');
+  const list = document.getElementById('choicesList');
+  list.innerHTML = '';
+
+  const hintMap = {sweet:'hint-sweet',risk:'hint-risk',trust:'hint-trust',bold:'hint-bold'};
+  const hintLabel = {sweet:'♡ 甜蜜',risk:'⚡ 风险',trust:'🤝 信任',bold:'✦ 大胆'};
+
+  choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    const hClass = hintMap[c.hint]||'';
+    const hText  = hintLabel[c.hint]||'';
+    btn.innerHTML = `<span class="choice-num">${i+1}</span><span>${c.text}</span>${hText?`<span class="choice-hint ${hClass}">${hText}</span>`:''}`;
+    btn.onclick = () => onChoice(c);
+    list.appendChild(btn);
+  });
+
+  wrap.style.display = 'block';
+  scrollDown();
+}
+
+function onChoice(c) {
+  document.getElementById('choicesWrap').style.display = 'none';
+  const mn = G.member ? G.member.name : '他';
+  appendMsg('你', c.text.replace(/\$\{ID\}/g, mn), true);
+  applyEffects(c.effects);
+  setTimeout(() => gotoNode(c.next), 400);
+}
+
+function showEnding(node) {
+  document.getElementById('eBadge').textContent = node.badge;
+  document.getElementById('eTitle').textContent = node.title;
+  document.getElementById('eSub').textContent   = node.sub;
+  document.getElementById('eDesc').textContent  = node.desc;
+  document.getElementById('eFinal1').textContent = G.aff;
+  document.getElementById('eFinal2').textContent = G.trust;
+  document.getElementById('eFinal3').textContent = G.chapter;
+  document.getElementById('choicesWrap').style.display = 'none';
+  setTimeout(() => goTo('s-ending'), 600);
+}
+
+// ══════════════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════════════
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.style.display = 'none';
+    s.classList.remove('active');
+  });
+  const s = document.getElementById(id);
+  s.style.display = 'flex';
+  setTimeout(() => s.classList.add('active'), 10);
+}
+
+function confirmMember() {
+  if (!G.member) return;
+  goTo('s-identity');
+}
+
+function startGame() {
+  if (!G.member || !G.identity) return;
+  G.story = buildStory(G.member.id, G.member.name, G.member.kr, G.member.color, G.identity.id);
+  G.aff=20; G.trust=20; G.risk=10; G.chapter=1;
+  document.getElementById('gMemberName').textContent = G.member.name + ' ' + G.member.kr;
+  document.getElementById('gChapter').textContent = '第一章';
+  updateStatBars();
+  chat().innerHTML = '';
+  goTo('s-game');
+  setTimeout(() => gotoNode(G.story.start), 300);
+}
+
+function confirmRestart() {
+  if (confirm('确定要重新开始吗？当前进度将不会自动保存。')) hardRestart();
+}
+
+function hardRestart() {
+  G = {member:null,identity:null,story:null,cur:null,seqIdx:0,aff:20,trust:20,risk:10,chapter:1,pendingChoices:null,saveMode:'save'};
+  document.querySelectorAll('.member-card').forEach(c=>c.classList.remove('sel'));
+  document.querySelectorAll('.identity-item').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('btnConfirmMember').disabled = true;
+  document.getElementById('btnConfirmId').disabled = true;
+  goTo('s-title');
+}
+
+// ══════════════════════════════════════════════════════
+// SAVE / LOAD
+// ══════════════════════════════════════════════════════
+function showSave(mode) {
+  G.saveMode = mode;
+  document.getElementById('saveModeLabel').textContent = mode==='save'?'保存':'读取';
+  document.getElementById('saveTitle').textContent = mode==='save'?'保存进度':'读取存档';
+  renderSlots(mode);
+  goTo('s-save');
+}
+
+function renderSlots(mode) {
+  const list = document.getElementById('slotList');
+  list.innerHTML = '';
+  for (let i=1;i<=3;i++) {
+    const raw = localStorage.getItem('tbz_save_'+i);
+    const slot = document.createElement('div');
+    slot.className = 'save-slot';
+    if (raw) {
+      const d = JSON.parse(raw);
+      slot.innerHTML = `<div class="slot-icon">💾</div><div class="slot-info"><div class="slot-title">槽位 ${i} · ${d.memberName}</div><div class="slot-meta">第${d.chapter}章 · 好感${d.aff} · ${d.date}</div></div><div class="slot-action">${mode==='save'?'覆盖':'读取'}</div>`;
+    } else {
+      slot.innerHTML = `<div class="slot-icon">⬜</div><div class="slot-info"><div class="slot-title">槽位 ${i}</div><div class="slot-meta">空档案</div></div><div class="slot-action">${mode==='save'?'保存':'-'}</div>`;
+    }
+    slot.onclick = () => {
+      if (mode==='save') saveSlot(i);
+      else if (raw) loadSlot(i);
+    };
+    list.appendChild(slot);
+  }
+}
+
+function saveSlot(i) {
+  if (!G.member) return;
+  const data = {
+    memberName: G.member.name,
+    memberId: G.member.id,
+    identityId: G.identity ? G.identity.id : '',
+    chapter: G.chapter,
+    aff: G.aff, trust: G.trust, risk: G.risk,
+    curNodeId: G.cur ? G.cur.id : G.story.start,
+    date: new Date().toLocaleDateString('zh-CN')
+  };
+  localStorage.setItem('tbz_save_'+i, JSON.stringify(data));
+  renderSlots('save');
+  alert('已保存到槽位'+i);
+}
+
+function loadSlot(i) {
+  const raw = localStorage.getItem('tbz_save_'+i);
+  if (!raw) return;
+  const d = JSON.parse(raw);
+  G.member = MEMBERS.find(m=>m.id===d.memberId) || MEMBERS[0];
+  G.identity = IDENTITIES.find(id=>id.id===d.identityId) || IDENTITIES[0];
+  G.aff=d.aff; G.trust=d.trust; G.risk=d.risk; G.chapter=d.chapter;
+  G.story = buildStory(G.member.id, G.member.name, G.member.kr, G.member.color, G.identity.id);
+  document.getElementById('gMemberName').textContent = G.member.name+' '+G.member.kr;
+  document.getElementById('gChapter').textContent = '第'+d.chapter+'章';
+  updateStatBars();
+  chat().innerHTML = '';
+  goTo('s-game');
+  setTimeout(() => gotoNode(d.curNodeId||G.story.start), 300);
+}
+
+// ══════════════════════════════════════════════════════
+// INIT UI
+// ══════════════════════════════════════════════════════
+function initMemberGrid() {
+  const grid = document.getElementById('memberGrid');
+  MEMBERS.forEach(m => {
+    const c = document.createElement('div');
+    c.className = 'member-card';
+    c.innerHTML = `<div class="mc-check">✓</div><div class="mc-name">${m.name}</div><div class="mc-kr">${m.kr}</div><div class="mc-desc">${m.desc}</div>`;
+    c.onclick = () => {
+      document.querySelectorAll('.member-card').forEach(x=>x.classList.remove('sel'));
+      c.classList.add('sel');
+      G.member = m;
+      document.getElementById('btnConfirmMember').disabled = false;
+    };
+    grid.appendChild(c);
+  });
+}
+
+function initIdentityList() {
+  const list = document.getElementById('identityList');
+  IDENTITIES.forEach(id => {
+    const item = document.createElement('div');
+    item.className = 'identity-item';
+    item.innerHTML = `<div class="ii-icon">${id.icon}</div><div class="ii-text"><div class="ii-title">${id.title}</div><div class="ii-sub">${id.sub}</div></div>`;
+    item.onclick = () => {
+      document.querySelectorAll('.identity-item').forEach(x=>x.classList.remove('sel'));
+      item.classList.add('sel');
+      G.identity = id;
+      document.getElementById('btnConfirmId').disabled = false;
+    };
+    list.appendChild(item);
+  });
+}
+
+function initStars() {
+  const c = document.getElementById('titleStars');
+  for (let i=0;i<60;i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;
+      --d:${2+Math.random()*4}s;--del:${Math.random()*3}s;
+      opacity:${.1+Math.random()*.5};`;
+    c.appendChild(s);
+  }
+}
+
+// Boot
+initStars();
+initMemberGrid();
+initIdentityList();
+// Ensure all screens hidden except title
+document.querySelectorAll('.screen').forEach(s => {
+  if (s.id !== 's-title') { s.style.display='none'; s.classList.remove('active'); }
+});
+</script>
+</body>
+</html>
